@@ -15,20 +15,27 @@ export function useProducts(category?: string) {
         stock: []
       })
 
+      const filtered = category && category !== 'All'
+        ? PRODUCTS.filter(p => p.category === category)
+        : PRODUCTS
+
       if (!isConfigured) {
-        const filtered = category && category !== 'All'
-          ? PRODUCTS.filter(p => p.category === category)
-          : PRODUCTS
         return filtered.map(mapToProductWithStock)
       }
+
       try {
         const data = category && category !== 'All'
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
         
-        return Array.isArray(data) ? data : filtered.map(mapToProductWithStock)
+        if (Array.isArray(data)) {
+          return data
+        } else {
+          console.warn('Inventory API returned non-array data, falling back to static products')
+          return filtered.map(mapToProductWithStock)
+        }
       } catch (err) {
-        console.error('Inventory API Fetch Error:', err)
+        console.error('Inventory API Fetch Error, falling back to static products:', err)
         return filtered.map(mapToProductWithStock)
       }
     },
