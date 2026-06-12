@@ -13,7 +13,7 @@ export function useProducts(category?: string) {
       const mapToProductWithStock = (p: any): ProductWithStock => ({
         code: p.prod_code || p.code || '',
         name: p.prod_name || p.name || '',
-        category: p.category_name || p.category || 'General',
+        category: p.product_line_name || p.category_name || p.category || 'General',
         description: p.description || '',
         imageUrl: p.image_url || p.imageUrl || '',
         stock: Array.isArray(p.stock) ? p.stock : []
@@ -32,18 +32,15 @@ export function useProducts(category?: string) {
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
         
-        // Handle paginated response { results: [] } or direct array []
         const rawProducts = response?.results || (Array.isArray(response) ? response : null)
 
         if (rawProducts && Array.isArray(rawProducts)) {
-          if (rawProducts.length > 0) console.log('Sample raw product from API:', rawProducts[0]);
           return rawProducts.map(mapToProductWithStock)
         } else {
-          console.warn('Inventory API returned unexpected format. Received:', response)
           return fallbackFiltered.map(mapToProductWithStock)
         }
       } catch (err) {
-        console.error('Inventory API Fetch Error, falling back to static products:', err)
+        console.error('Inventory API Fetch Error:', err)
         return fallbackFiltered.map(mapToProductWithStock)
       }
     },
