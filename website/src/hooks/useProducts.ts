@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { inventoryService } from '@/services/inventory.service'
-import type { ProductWithStock } from '@/services/inventory.service'
+import type { ProductWithStock, StockLevel } from '@/services/inventory.service'
 import { PRODUCTS } from '@/constants'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
@@ -16,7 +16,14 @@ export function useProducts(category?: string) {
         category: p.product_line_name || p.category_name || p.category || 'General',
         description: p.description || '',
         imageUrl: p.image_url || p.imageUrl || '',
-        stock: Array.isArray(p.stock) ? p.stock : []
+        stock: Array.isArray(p.stock) 
+          ? p.stock.map((s: any): StockLevel => ({
+              branchId: s.branch_id || s.branchId || '',
+              branchName: s.branch_name || s.branchName || 'Unknown Branch',
+              quantity: s.quantity || 0,
+              inStock: s.in_stock ?? s.inStock ?? (s.quantity > 0)
+            }))
+          : []
       })
 
       const fallbackFiltered = category && category !== 'All'
