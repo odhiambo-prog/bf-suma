@@ -31,7 +31,7 @@ export function useProducts(category?: string) {
         if (Array.isArray(data)) {
           return data
         } else {
-          console.warn('Inventory API returned non-array data, falling back to static products')
+          console.warn('Inventory API returned non-array data. Received:', data)
           return filtered.map(mapToProductWithStock)
         }
       } catch (err) {
