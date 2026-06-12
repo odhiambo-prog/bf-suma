@@ -69,8 +69,11 @@ export function useEvents(status?: EventStatus) {
       if (status) query = query.eq('status', status)
 
       const { data, error } = await query
-      if (error) throw error
-      return data?.length ? data : fallbackEvents
+      if (error) {
+        console.error('Supabase Events Error:', error)
+        return fallbackEvents
+      }
+      return Array.isArray(data) && data.length ? data : fallbackEvents
     },
   })
 }

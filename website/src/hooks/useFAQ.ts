@@ -36,8 +36,11 @@ export function useFAQ(category?: string) {
       if (category) query = query.eq('category', category)
 
       const { data, error } = await query
-      if (error) throw error
-      return data?.length ? data : fallbackFAQs
+      if (error) {
+        console.error('Supabase FAQ Error:', error)
+        return fallbackFAQs
+      }
+      return Array.isArray(data) && data.length ? data : fallbackFAQs
     },
   })
 }

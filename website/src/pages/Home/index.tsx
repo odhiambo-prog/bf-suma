@@ -28,7 +28,8 @@ const fadeUp = {
 
 function EventsPreview() {
   const { data: events = [], isLoading } = useEvents()
-  const preview = events.slice(0, 3)
+  const safeEvents = Array.isArray(events) ? events : []
+  const preview = safeEvents.slice(0, 3)
 
   return (
     <section className="py-28 bg-surface-subtle" id="events-preview">
@@ -107,7 +108,8 @@ function EventsPreview() {
 
 function ReviewsPreview() {
   const { data: reviews = [], isLoading } = useReviews()
-  const preview = reviews.slice(0, 3)
+  const safeReviews = Array.isArray(reviews) ? reviews : []
+  const preview = safeReviews.slice(0, 3)
 
   return (
     <section className="py-28 bg-white" id="reviews-preview">
@@ -181,7 +183,8 @@ function ReviewsPreview() {
 
 function FAQPreview() {
   const { data: faqs = [], isLoading } = useFAQ()
-  const preview = faqs.slice(0, 5)
+  const safeFaqs = Array.isArray(faqs) ? faqs : []
+  const preview = safeFaqs.slice(0, 5)
   const items = preview.map(f => ({ question: f.question, answer: f.answer }))
 
   return (

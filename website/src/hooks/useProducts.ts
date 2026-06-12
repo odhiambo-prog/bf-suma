@@ -22,13 +22,13 @@ export function useProducts(category?: string) {
         return filtered.map(mapToProductWithStock)
       }
       try {
-        return category && category !== 'All'
+        const data = category && category !== 'All'
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
-      } catch {
-        const filtered = category && category !== 'All'
-          ? PRODUCTS.filter(p => p.category === category)
-          : PRODUCTS
+        
+        return Array.isArray(data) ? data : filtered.map(mapToProductWithStock)
+      } catch (err) {
+        console.error('Inventory API Fetch Error:', err)
         return filtered.map(mapToProductWithStock)
       }
     },

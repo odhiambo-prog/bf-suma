@@ -19,7 +19,8 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
 
   const { data: products = [], isLoading } = useProducts(selectedCategory)
 
-  const displayProducts = preview ? products.slice(0, 5) : products
+  const safeProducts = Array.isArray(products) ? products : []
+  const displayProducts = preview ? safeProducts.slice(0, 5) : safeProducts
 
   return (
     <section className="py-28 bg-surface-subtle" id="products-preview">
