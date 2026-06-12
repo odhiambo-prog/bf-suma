@@ -20,6 +20,10 @@ const BASE = SHOP_CONFIG.api.inventoryBaseUrl
 const KEY = SHOP_CONFIG.api.inventoryApiKey
 
 async function inventoryFetch<T>(path: string): Promise<T> {
+  console.log('[INVENTORY] Base URL:', BASE)
+  console.log('[INVENTORY] Full URL:', `${BASE}${path}`)
+  console.log('[INVENTORY] Auth header:', `Bearer ${KEY}`)
+  console.log('[INVENTORY] Key length:', KEY.length)
   const res = await fetch(`${BASE}${path}`, {
     headers: {
       Authorization: `Bearer ${KEY}`,
