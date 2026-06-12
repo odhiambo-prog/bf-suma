@@ -10,21 +10,28 @@ export function useProducts(category?: string) {
   return useQuery<ProductWithStock[]>({
     queryKey: ['products', category],
     queryFn: async () => {
-      const mapToProductWithStock = (p: any): ProductWithStock => ({
-        code: p.prod_code || p.code || '',
-        name: p.prod_name || p.name || '',
-        category: p.product_line_name || p.category_name || p.category || 'General',
-        description: p.description || '',
-        imageUrl: p.image_url || p.imageUrl || '',
-        stock: Array.isArray(p.stock) 
-          ? p.stock.map((s: any): StockLevel => ({
-              branchId: s.branch_id || s.branchId || '',
-              branchName: s.branch_name || s.branchName || 'Unknown Branch',
-              quantity: s.quantity || 0,
-              inStock: s.in_stock ?? s.inStock ?? (s.quantity > 0)
-            }))
-          : []
-      })
+      const mapToProductWithStock = (p: any): ProductWithStock => {
+        // Log individual product if it has stock to see the structure
+        if (p.stock && p.stock.length > 0) {
+          console.log('Found product with stock data:', p.prod_name, p.stock);
+        }
+
+        return {
+          code: p.prod_code || p.code || '',
+          name: p.prod_name || p.name || '',
+          category: p.product_line_name || p.category_name || p.category || 'General',
+          description: p.description || '',
+          imageUrl: p.image_url || p.imageUrl || p.image || '',
+          stock: Array.isArray(p.stock) 
+            ? p.stock.map((s: any): StockLevel => ({
+                branchId: s.branch_id || s.branchId || '',
+                branchName: s.branch_name || s.branchName || 'Unknown Branch',
+                quantity: s.quantity || 0,
+                inStock: s.in_stock ?? s.inStock ?? (s.quantity > 0)
+              }))
+            : []
+        }
+      }
 
       const fallbackFiltered = category && category !== 'All'
         ? PRODUCTS.filter(p => p.category === category)
@@ -39,11 +46,14 @@ export function useProducts(category?: string) {
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
         
+        console.log('FULL API RESPONSE:', response);
+
         const rawProducts = response?.results || (Array.isArray(response) ? response : null)
 
         if (rawProducts && Array.isArray(rawProducts)) {
           return rawProducts.map(mapToProductWithStock)
         } else {
+          console.warn('Expected array or results field, got:', response);
           return fallbackFiltered.map(mapToProductWithStock)
         }
       } catch (err) {

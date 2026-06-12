@@ -31,10 +31,10 @@ async function inventoryFetch<T>(path: string): Promise<T> {
 }
 
 export const inventoryService = {
-  getProducts: () => inventoryFetch<ProductWithStock[]>('/products'),
-  getProductByCode: (code: string) => inventoryFetch<ProductWithStock>(`/products/${code}`),
+  getProducts: () => inventoryFetch<any>('/products/'),
+  getProductByCode: (code: string) => inventoryFetch<any>(`/products/${code}/`),
   getProductsByCategory: (category: string) =>
-    inventoryFetch<ProductWithStock[]>(`/products?category=${encodeURIComponent(category)}`),
-  getBranches: () => inventoryFetch<{ id: string; name: string }[]>('/branches'),
-  getStockByBranch: (branchId: string) => inventoryFetch<StockLevel[]>(`/stock?branch=${branchId}`),
+    inventoryFetch<any>(`/products/?category=${encodeURIComponent(category)}`),
+  getBranches: () => inventoryFetch<{ id: string; name: string }[]>('/branches/'),
+  getStockByBranch: (branchId: string) => inventoryFetch<StockLevel[]>(`/stock/?branch=${branchId}`),
 }
