@@ -10,33 +10,41 @@ export function useProducts(category?: string) {
   return useQuery<ProductWithStock[]>({
     queryKey: ['products', category],
     queryFn: async () => {
-      const mapToProductWithStock = (p: typeof PRODUCTS[0]): ProductWithStock => ({
-        ...p,
-        stock: []
+      const mapToProductWithStock = (p: any): ProductWithStock => ({
+        code: p.prod_code || p.code || '',
+        name: p.prod_name || p.name || '',
+        category: p.category_name || p.category || 'General',
+        description: p.description || '',
+        imageUrl: p.image_url || p.imageUrl || '',
+        stock: Array.isArray(p.stock) ? p.stock : []
       })
 
-      const filtered = category && category !== 'All'
+      const fallbackFiltered = category && category !== 'All'
         ? PRODUCTS.filter(p => p.category === category)
         : PRODUCTS
 
       if (!isConfigured) {
-        return filtered.map(mapToProductWithStock)
+        return fallbackFiltered.map(mapToProductWithStock)
       }
 
       try {
-        const data = category && category !== 'All'
+        const response: any = category && category !== 'All'
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
         
-        if (Array.isArray(data)) {
-          return data
+        // Handle paginated response { results: [] } or direct array []
+        const rawProducts = response?.results || (Array.isArray(response) ? response : null)
+
+        if (rawProducts && Array.isArray(rawProducts)) {
+          if (rawProducts.length > 0) console.log('Sample raw product from API:', rawProducts[0]);
+          return rawProducts.map(mapToProductWithStock)
         } else {
-          console.warn('Inventory API returned non-array data. Received:', data)
-          return filtered.map(mapToProductWithStock)
+          console.warn('Inventory API returned unexpected format. Received:', response)
+          return fallbackFiltered.map(mapToProductWithStock)
         }
       } catch (err) {
         console.error('Inventory API Fetch Error, falling back to static products:', err)
-        return filtered.map(mapToProductWithStock)
+        return fallbackFiltered.map(mapToProductWithStock)
       }
     },
     staleTime: 1000 * 60 * 10,
