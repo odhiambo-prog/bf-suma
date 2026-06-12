@@ -1,0 +1,122 @@
+import { motion } from 'framer-motion'
+import { Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import Carousel from '@/components/ui/Carousel'
+import { SHOP_CONFIG } from '@/config/shop.config'
+
+const heroImages = [
+  '/images/herosection/1.jpeg',
+  '/images/herosection/2.jpeg',
+  '/images/herosection/3.jpeg',
+  '/images/herosection/4.jpeg',
+  '/images/herosection/5.jpeg',
+  '/images/herosection/6.jpeg',
+  '/images/herosection/7.jpeg',
+  '/images/herosection/9.jpeg',
+  '/images/herosection/10.jpeg',
+]
+
+export default function HeroSection() {
+  const carouselSlides = heroImages.map(src => (
+    <div className="relative w-full h-full min-h-[100dvh]">
+      <img
+        src={src}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+    </div>
+  ))
+
+  return (
+    <section className="relative h-screen flex overflow-hidden">
+      <div className="w-full lg:w-1/2 relative flex items-center bg-slate-900 z-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-jade-950" />
+        <div className="absolute top-1/3 -right-32 w-64 h-64 bg-jade-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-20 w-48 h-48 bg-cobalt-600/10 rounded-full blur-3xl" />
+
+        <div className="max-w-xl mx-auto px-8 md:px-12 relative z-10 w-full">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-jade-300 mb-6">
+              {SHOP_CONFIG.tagline}
+            </p>
+
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl text-white leading-[1.1] mb-6 text-balance">
+              Elevate Your{' '}
+              <span className="text-jade-400">Vitality</span>
+              {' '}with Nature's Best
+            </h1>
+
+            <p className="text-sm text-slate-300 leading-relaxed mb-10 max-w-md">
+              {SHOP_CONFIG.heroSubtitle}
+            </p>
+
+            <Link
+              to="/about"
+              className="inline-flex items-center justify-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all"
+            >
+              Learn More
+            </Link>
+
+            <div className="mt-14 flex items-center gap-8">
+              <div>
+                <p className="text-2xl font-bold text-white font-mono">50+</p>
+                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Products</p>
+              </div>
+              <div className="w-px h-8 bg-slate-600" />
+              <div>
+                <p className="text-2xl font-bold text-white font-mono">10k+</p>
+                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Customers</p>
+              </div>
+              <div className="w-px h-8 bg-slate-600" />
+              <div>
+                <p className="text-2xl font-bold text-white font-mono">4.9</p>
+                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Rating</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="hidden lg:block w-1/2 relative bg-slate-900">
+        <Carousel
+          slides={carouselSlides}
+          autoPlay
+          showArrows={false}
+          showDots={false}
+          className="absolute inset-0"
+        />
+      </div>
+
+      <div className="lg:hidden absolute inset-0">
+        <Carousel
+          slides={carouselSlides}
+          autoPlay
+          showArrows={false}
+          showDots={false}
+          className="absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-slate-900/40" />
+      </div>
+
+      <motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute bottom-8 right-8 z-20 bg-slate-800/90 border border-slate-700 p-5 hidden lg:block backdrop-blur-sm"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 bg-jade-600/20 flex items-center justify-center">
+            <Shield className="w-5 h-5 text-jade-400" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-white">100% Organic</p>
+            <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Pure Extracts</p>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  )
+}

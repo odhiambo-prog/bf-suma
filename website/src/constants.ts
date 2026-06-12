@@ -5,27 +5,28 @@ export interface Product {
 }
 
 export const CATEGORIES = [
-  "Immune Booster",
-  "Premium Selected",
+  "Better life",
   "Bone & Joint Care",
   "Cardiovascular Health",
-  "Digestive Living",
-  "Better Life",
-  "Anti-Aging",
+  "Digestive Health",
+  "Immune Boosters",
+  "Premium Selected",
+  "Registration",
+  "Smart Kids",
   "Suma Living",
-  "Smart Kids"
+  "Anti-Aging"
 ];
 
 export const PRODUCTS: Product[] = [
-  // Immune Booster
-  { code: "AP013C", name: "Pure & Broken Ganoderma Spores", category: "Immune Booster" },
-  { code: "AP117A", name: "Pure & Broken Ganoderma Spores", category: "Immune Booster" },
-  { code: "AP147B", name: "Pure & Broken Ganoderma Oil", category: "Immune Booster" },
-  { code: "AP014F", name: "Refined Yunzhi Essence", category: "Immune Booster" },
-  { code: "AP153A", name: "Quad Reishi", category: "Immune Booster" },
-  { code: "AP028F", name: "4-in-1 Ginseng Coffee", category: "Immune Booster" },
-  { code: "AP011F", name: "4-in-1 Reishi Coffee", category: "Immune Booster" },
-  { code: "AP039F", name: "4-in-1 Cordyceps Coffee", category: "Immune Booster" },
+  // Immune Boosters
+  { code: "AP013C", name: "Pure & Broken Ganoderma Spores", category: "Immune Boosters" },
+  { code: "AP117A", name: "Pure & Broken Ganoderma Spores", category: "Immune Boosters" },
+  { code: "AP147B", name: "Pure & Broken Ganoderma Oil", category: "Immune Boosters" },
+  { code: "AP014F", name: "Refined Yunzhi Essence", category: "Immune Boosters" },
+  { code: "AP153A", name: "Quad Reishi", category: "Immune Boosters" },
+  { code: "AP028F", name: "4-in-1 Ginseng Coffee", category: "Immune Boosters" },
+  { code: "AP011F", name: "4-in-1 Reishi Coffee", category: "Immune Boosters" },
+  { code: "AP039F", name: "4-in-1 Cordyceps Coffee", category: "Immune Boosters" },
   
   // Premium Selected
   { code: "AP116E", name: "YOUTHEVER", category: "Premium Selected" },
@@ -46,22 +47,22 @@ export const PRODUCTS: Product[] = [
   { code: "AP152A", name: "GymEffect", category: "Cardiovascular Health" },
   { code: "AP169A", name: "Detoxilive Pro Oil Capsules", category: "Cardiovascular Health" },
   
-  // Digestive Living
-  { code: "AP006E", name: "ConstiRelax™ Solution", category: "Digestive Living" },
-  { code: "AP030A", name: "NTDiarr (1 dozen)", category: "Digestive Living" },
-  { code: "AP041E", name: "Novel Depile™ Capsules", category: "Digestive Living" },
-  { code: "AP099E", name: "Probio3", category: "Digestive Living" },
-  { code: "AP100E", name: "Veggie Veggie Bioenzyme", category: "Digestive Living" },
-  { code: "AP102E", name: "Ez-Xlim™ Tablets", category: "Digestive Living" },
-  { code: "AP118F", name: "Elements", category: "Digestive Living" },
+  // Digestive Health
+  { code: "AP006E", name: "ConstiRelax™ Solution", category: "Digestive Health" },
+  { code: "AP030A", name: "NTDiarr (1 dozen)", category: "Digestive Health" },
+  { code: "AP041E", name: "Novel Depile™ Capsules", category: "Digestive Health" },
+  { code: "AP099E", name: "Probio3", category: "Digestive Health" },
+  { code: "AP100E", name: "Veggie Veggie Bioenzyme", category: "Digestive Health" },
+  { code: "AP102E", name: "Ez-Xlim™ Tablets", category: "Digestive Health" },
+  { code: "AP118F", name: "Elements", category: "Digestive Health" },
   
-  // Better Life
-  { code: "AP009F", name: "ProstatRelax™ Capsules", category: "Better Life" },
-  { code: "AP029E", name: "X Power Man Capsules-New", category: "Better Life" },
-  { code: "AP113A", name: "X Power Coffee for Men", category: "Better Life" },
-  { code: "AP074E", name: "Feminergy Capsules", category: "Better Life" },
-  { code: "AP179D", name: "FemiBiotics", category: "Better Life" },
-  { code: "AP192C", name: "FemiCalcium D3", category: "Better Life" },
+  // Better life
+  { code: "AP009F", name: "ProstatRelax™ Capsules", category: "Better life" },
+  { code: "AP029E", name: "X Power Man Capsules-New", category: "Better life" },
+  { code: "AP113A", name: "X Power Coffee for Men", category: "Better life" },
+  { code: "AP074E", name: "Feminergy Capsules", category: "Better life" },
+  { code: "AP179D", name: "FemiBiotics", category: "Better life" },
+  { code: "AP192C", name: "FemiCalcium D3", category: "Better life" },
   
   // Anti-Aging
   { code: "CP201", name: "Youth Refreshing Facial Cleanser", category: "Anti-Aging" },
