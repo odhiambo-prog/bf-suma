@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Check, X, Trash2, Star, ExternalLink } from 'lucide-react'
+import { Check, X, Trash2, Star } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface Review {

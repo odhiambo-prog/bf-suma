@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Upload, X, ExternalLink } from 'lucide-react'
+import { Plus, Pencil, Trash2, Upload, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import type { Event, EventMedia, EventStatus } from '@/types/event.types'
+import type { Event, EventStatus } from '@/types/event.types'
 
 const statuses: EventStatus[] = ['upcoming', 'ongoing', 'past']
 
