@@ -1,67 +1,74 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight, Activity, Coffee, Award } from 'lucide-react'
-import SectionHeader from '@/components/ui/SectionHeader'
-
-const items = [
-  {
-    title: 'Wellness Center',
-    desc: 'Professional full-body screenings and personalized health consultations.',
-    icon: Activity,
-    img: '/images/WhatsApp Image 2026-06-09 at 14.09.11.jpeg',
-  },
-  {
-    title: 'Eagle Bistro',
-    desc: 'Enjoy our signature Cordyceps and Reishi functional coffees in a relaxing space.',
-    icon: Coffee,
-    img: '/images/WhatsApp Image 2026-06-09 at 14.09.13.jpeg',
-  },
-  {
-    title: 'Training Hub',
-    desc: 'Daily training sessions for distributors and product knowledge workshops.',
-    icon: Award,
-    img: '/images/WhatsApp Image 2026-06-09 at 14.09.14 (3).jpeg',
-  },
-]
+import { Link } from 'react-router-dom'
+import { SHOP_CONFIG } from '@/config/shop.config'
 
 export default function AboutSection() {
   return (
-    <section className="py-28 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <SectionHeader
-          title="BFSUMA Nairobi Eagle Shop"
-          subtitle="Beyond supplements, we are a wellness hub. Located at the heart of Nairobi, our Eagle Shop provides professional health services to support your journey."
-        />
+    <section className="py-28 relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50/40 to-stone-100">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#fef3c7_0%,_transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_#fde68a/20_0%,_transparent_50%)]" />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {items.map((item, i) => {
-            const Icon = item.icon
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="group relative border border-surface-border bg-white hover:bg-surface-subtle transition-colors"
-              >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={item.img}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-8">
-                  <Icon className="w-8 h-8 text-jade-600 mb-5" strokeWidth={1.5} />
-                  <h3 className="font-display text-xl text-slate-900 mb-3">{item.title}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed mb-6">{item.desc}</p>
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-jade-600 group-hover:gap-3 transition-all">
-                    Learn More <ArrowUpRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </motion.div>
-            )
-          })}
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="w-full"
+          >
+              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-amber-900/20 border border-amber-200/50 bg-amber-100">
+                <iframe
+                  src="https://www.youtube.com/embed/TkFIWRr2sN8?modestbranding=1&rel=0"
+                  title="BF SUMA Eagle Shop"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+                <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-200/40 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -top-4 -left-4 w-20 h-20 bg-amber-300/30 rounded-full blur-2xl pointer-events-none" />
+              </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
+          >
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-amber-700 mb-5">
+              Leading Pharmaceutical Company in the World
+            </p>
+
+            <h2 className="font-display text-4xl sm:text-5xl text-slate-900 leading-[1.15] mb-6 text-balance">
+              Elevate Your{' '}
+              <span className="text-amber-600">Vitality</span>
+              {' '}with Nature's Best
+            </h2>
+
+            <p className="text-sm text-slate-500 leading-relaxed mb-8 max-w-md">
+              {SHOP_CONFIG.heroSubtitle}
+            </p>
+
+
+
+            <div className="mt-12 flex items-center gap-8">
+              <div>
+                <p className="text-2xl font-bold text-slate-900 font-mono">50+</p>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Products</p>
+              </div>
+              <div className="w-px h-8 bg-amber-200" />
+              <div>
+                <p className="text-2xl font-bold text-slate-900 font-mono">10k+</p>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Customers</p>
+              </div>
+              <div className="w-px h-8 bg-amber-200" />
+              <div>
+                <p className="text-2xl font-bold text-slate-900 font-mono">4.9</p>
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Rating</p>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

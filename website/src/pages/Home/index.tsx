@@ -39,6 +39,7 @@ function EventsPreview() {
           subtitle="Join us for wellness events, training sessions, and community gatherings."
           eyebrow="Stay Connected"
         />
+
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (

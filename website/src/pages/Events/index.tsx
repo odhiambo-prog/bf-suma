@@ -24,6 +24,14 @@ export default function Events() {
           eyebrow="Stay Connected"
         />
 
+        <div className="mb-12 overflow-hidden rounded-lg">
+          <img
+            src="https://res.cloudinary.com/do35thu9z/image/upload/v1781341107/cover_kedobg.webp"
+            alt="Events cover"
+            className="w-full h-auto block"
+          />
+        </div>
+
         <div className="flex justify-center mb-12">
           <TabGroup
             tabs={tabs}

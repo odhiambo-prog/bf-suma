@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Shield } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import Carousel from '@/components/ui/Carousel'
+import { Link } from 'react-router-dom'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 const heroImages = [
@@ -44,14 +44,13 @@ export default function HeroSection() {
               {SHOP_CONFIG.tagline}
             </p>
 
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl text-white leading-[1.1] mb-6 text-balance">
-              Elevate Your{' '}
-              <span className="text-jade-400">Vitality</span>
-              {' '}with Nature's Best
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.15] mb-5 text-balance">
+              BFSUMA Nairobi{' '}
+              <span className="text-jade-400">Eagle Shop</span>
             </h1>
 
             <p className="text-sm text-slate-300 leading-relaxed mb-10 max-w-md">
-              {SHOP_CONFIG.heroSubtitle}
+              Beyond supplements, we are a wellness hub. Located at the heart of Nairobi, our Eagle Shop provides professional health services to support your journey.
             </p>
 
             <Link
@@ -60,23 +59,6 @@ export default function HeroSection() {
             >
               Learn More
             </Link>
-
-            <div className="mt-14 flex items-center gap-8">
-              <div>
-                <p className="text-2xl font-bold text-white font-mono">50+</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Products</p>
-              </div>
-              <div className="w-px h-8 bg-slate-600" />
-              <div>
-                <p className="text-2xl font-bold text-white font-mono">10k+</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Customers</p>
-              </div>
-              <div className="w-px h-8 bg-slate-600" />
-              <div>
-                <p className="text-2xl font-bold text-white font-mono">4.9</p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Rating</p>
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>
@@ -109,11 +91,11 @@ export default function HeroSection() {
       >
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-jade-600/20 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-jade-400" />
+            <Shield className="w-5 h-5 text-jade-400" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-white">100% Organic</p>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Pure Extracts</p>
+            <p className="text-sm font-semibold text-white">Wellness Hub</p>
+            <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Nairobi</p>
           </div>
         </div>
       </motion.div>
