@@ -180,7 +180,12 @@ function renderThumbnail(item: EventMedia, onClick: () => void) {
           loading="lazy"
         />
       ) : isVideo ? (
-        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center" />
+        <video
+          src={item.url}
+          className="w-full h-full object-cover"
+          muted
+          preload="metadata"
+        />
       ) : (
         <img
           src={item.url}
