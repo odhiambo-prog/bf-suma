@@ -44,7 +44,7 @@ export default function HeroSection() {
             </p>
 
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.15] mb-5 text-balance">
-              BFSUMA Nairobi{' '}
+              BF SUMA Nairobi{' '}
               <span className="text-jade-400">Eagle Shop</span>
             </h1>
 
