@@ -123,9 +123,13 @@ function ReviewsPreview() {
                   className="border border-surface-border bg-white p-6"
                 >
                   <div className="flex items-center gap-4 mb-5">
-                    <div className="w-12 h-12 bg-jade-50 flex items-center justify-center text-jade-700 font-bold text-xs font-mono">
-                      {initials}
-                    </div>
+                    {review.photo_url ? (
+                      <img src={review.photo_url} alt={review.reviewer_name} className="w-12 h-12 object-cover border border-surface-border" />
+                    ) : (
+                      <div className="w-12 h-12 bg-jade-50 flex items-center justify-center text-jade-700 font-bold text-xs font-mono">
+                        {initials}
+                      </div>
+                    )}
                     <div>
                       <p className="text-sm font-semibold text-slate-900">{review.reviewer_name}</p>
                       <div className="flex items-center gap-0.5 mt-1">
