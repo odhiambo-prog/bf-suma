@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { Shield } from 'lucide-react'
 import Carousel from '@/components/ui/Carousel'
 import { Link } from 'react-router-dom'
 import { SHOP_CONFIG } from '@/config/shop.config'
@@ -83,22 +82,6 @@ export default function HeroSection() {
         />
         <div className="absolute inset-0 bg-slate-900/40" />
       </div>
-
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-8 right-8 z-20 bg-slate-800/90 border border-slate-700 p-5 hidden lg:block backdrop-blur-sm"
-      >
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-jade-600/20 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-jade-400" strokeWidth={1.5} />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-white">Wellness Hub</p>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Nairobi</p>
-          </div>
-        </div>
-      </motion.div>
     </section>
   )
 }

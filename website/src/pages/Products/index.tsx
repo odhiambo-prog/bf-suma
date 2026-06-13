@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingBag, ArrowRight, Loader2, Sparkles } from 'lucide-react'
+import { ShoppingBag, ArrowRight, Loader2, Sparkles, Leaf } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CATEGORIES } from '@/constants'
 import { useProducts } from '@/hooks/useProducts'
@@ -54,6 +54,26 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-cobalt-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 relative">
+        {preview && (
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -top-4 right-6 z-10 hidden md:block"
+          >
+            <div className="bg-white/90 border border-jade-200 p-4 backdrop-blur-sm shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-jade-100 flex items-center justify-center">
+                  <Leaf className="w-4.5 h-4.5 text-jade-700" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-jade-900">100% Pure.</p>
+                  <p className="text-sm font-semibold text-jade-900">Naturally Organic</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
