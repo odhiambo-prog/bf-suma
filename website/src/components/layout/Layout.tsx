@@ -14,7 +14,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-surface text-slate-900 selection:bg-jade-600/20 selection:text-jade-900">
       <Navbar />
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         <motion.main
           key={location.pathname}
           initial={{ opacity: 0 }}
