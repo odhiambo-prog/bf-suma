@@ -60,15 +60,15 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
         product_used: data.product_used || null,
         photo_url: photoUrl || null,
         rating,
-        is_approved: false,
+        is_approved: true,
       })
 
       if (error) throw error
 
-      toast.success('Thank you! Your review will appear after approval.')
+      toast.success('Thank you! Your review has been posted.')
       onClose()
     } catch {
-      toast.success('Thank you! Your review has been submitted for approval.')
+      toast.error('Something went wrong. Please try again.')
       onClose()
     } finally {
       setIsSubmitting(false)
