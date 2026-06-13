@@ -6,7 +6,6 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import EventCard from './EventCard'
 import EventDetail from './EventDetail'
 import { useEvents } from '@/hooks/useEvents'
-import { SHOP_CONFIG } from '@/config/shop.config'
 
 const tabs = ['All', 'Upcoming', 'Ongoing', 'Past']
 
@@ -49,7 +48,7 @@ export default function Events() {
             ))}
           </div>
         ) : (
-          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div layout id="events-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
               {events.map(event => (
                 <EventCard
@@ -77,26 +76,24 @@ export default function Events() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-16 bg-gradient-to-br from-jade-700 to-jade-900 rounded-2xl p-10 md:p-14 text-center relative overflow-hidden"
+          className="mt-16 bg-gradient-to-br from-cobalt-600 to-cobalt-800 rounded-2xl p-10 md:p-14 text-center relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-cobalt-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-jade-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
           <div className="relative z-10">
-            <Calendar className="w-8 h-8 text-jade-200 mx-auto mb-5" strokeWidth={1.5} />
+            <Calendar className="w-8 h-8 text-cobalt-200 mx-auto mb-5" strokeWidth={1.5} />
             <h2 className="font-display text-2xl sm:text-3xl text-white mb-4">
-              Ready to Transform Your Health?
+              Don't Miss Our Next Event
             </h2>
-            <p className="text-sm text-jade-100 max-w-lg mx-auto mb-8 leading-relaxed">
-              Our wellness experts are here to guide you on your journey to optimal well-being. Book a personalized consultation today and take the first step toward a healthier you.
+            <p className="text-sm text-cobalt-100 max-w-lg mx-auto mb-8 leading-relaxed">
+              Stay connected with our community. Join us at an upcoming event, workshop, or gathering — there's always something exciting happening at BF SUMA.
             </p>
-            <a
-              href={`https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace('+', '')}?text=Hi, I'd like to book a wellness consultation.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-white text-jade-700 hover:bg-jade-50 px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-lg"
+            <button
+              onClick={() => document.getElementById('events-grid')?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center gap-2 bg-white text-cobalt-700 hover:bg-cobalt-50 px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-lg"
             >
-              Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+              Join an Event <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </motion.div>
       </div>
