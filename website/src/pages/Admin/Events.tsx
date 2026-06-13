@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Upload, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, Upload, X, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { Event, EventStatus } from '@/types/event.types'
 
@@ -20,6 +20,8 @@ export default function AdminEvents() {
   const [mediaUrl, setMediaUrl] = useState('')
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'youtube'>('image')
   const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [uploadErrorEventId, setUploadErrorEventId] = useState('')
 
   useEffect(() => { loadEvents() }, [])
 
@@ -78,13 +80,19 @@ export default function AdminEvents() {
   async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>, eventId: string) {
     const files = e.target.files
     if (!files || files.length === 0) return
+    setUploadError('')
+    setUploadErrorEventId('')
     setUploading(true)
     let uploaded = 0
     for (const file of Array.from(files)) {
       const ext = file.name.split('.').pop()
       const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
       const { error } = await supabase.storage.from('event-media').upload(filename, file, { contentType: file.type })
-      if (!error) {
+      if (error) {
+        console.error('Supabase upload error:', error)
+        setUploadError(error.message || 'Upload failed. Check console for details.')
+        setUploadErrorEventId(eventId)
+      } else {
         const { data: { publicUrl } } = supabase.storage.from('event-media').getPublicUrl(filename)
         await supabase.from('event_media').insert({
           event_id: eventId,
@@ -245,6 +253,12 @@ export default function AdminEvents() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-slate-100">
+                {uploadError && uploadErrorEventId === event.id && (
+                  <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded text-[11px] text-red-700">
+                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    {uploadError}
+                  </div>
+                )}
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Media ({event.event_media?.length || 0})</p>
                   <div className="flex items-center gap-2">

@@ -30,7 +30,13 @@ export default function MediaCarousel({
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [])
 
   const goTo = useCallback((i: number) => {
     setDirection(i > index ? 1 : -1)
@@ -44,7 +50,9 @@ export default function MediaCarousel({
   useEffect(() => {
     if (!autoPlay || paused || items.length <= 1) return
     timerRef.current = setInterval(goNext, interval)
-    return () => clearInterval(timerRef.current)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
   }, [autoPlay, paused, items.length, interval, goNext])
 
   useEffect(() => {
@@ -172,12 +180,7 @@ function renderThumbnail(item: EventMedia, onClick: () => void) {
           loading="lazy"
         />
       ) : isVideo ? (
-        <video
-          src={item.url}
-          className="w-full h-full object-cover"
-          muted
-          preload="metadata"
-        />
+        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center" />
       ) : (
         <img
           src={item.url}
