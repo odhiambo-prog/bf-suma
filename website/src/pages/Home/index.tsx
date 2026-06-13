@@ -53,8 +53,7 @@ function EventsPreview() {
           <motion.div
             variants={containerVariants}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            animate="visible"
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             {preview.map(event => (
@@ -112,8 +111,7 @@ function ReviewsPreview() {
           <motion.div
             variants={containerVariants}
             initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
+            animate="visible"
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             {preview.map(review => {
@@ -218,8 +216,7 @@ function JoinUsPreview() {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
+          animate="visible"
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
         >
           {previewBenefits.map((benefit, i) => {

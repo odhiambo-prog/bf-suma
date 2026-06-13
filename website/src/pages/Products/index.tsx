@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingBag, ArrowRight, Loader2, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { CATEGORIES } from '@/constants'
@@ -42,8 +42,6 @@ interface ProductsSectionProps {
 export default function ProductsSection({ preview }: ProductsSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [selectedProduct, setSelectedProduct] = useState<ProductWithStock | null>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(gridRef, { once: true, amount: 0.1 })
 
   const { data: products = [], isLoading } = useProducts(selectedCategory)
 
@@ -58,8 +56,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
       <div className="max-w-7xl mx-auto px-6 relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6"
         >
@@ -92,8 +89,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <CategoryFilter
@@ -117,11 +113,10 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
           </div>
         ) : (
           <motion.div
-            ref={gridRef}
             layout
             variants={containerVariants}
             initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            animate="visible"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12"
           >
             <AnimatePresence mode="popLayout">
@@ -144,8 +139,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
         {preview && !isLoading && products.length > 4 && (
           <motion.div
             initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
             className="text-center mt-12"
           >
