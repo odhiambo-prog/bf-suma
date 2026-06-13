@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { ArrowRight, TrendingUp, BookOpen, Users, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import HeroSection from './HeroSection'
@@ -92,7 +92,65 @@ function EventsPreview() {
 function ReviewsPreview() {
   const { data: reviews = [], isLoading } = useReviews()
   const safeReviews = Array.isArray(reviews) ? reviews : []
-  const preview = safeReviews.slice(0, 3)
+  const preview = safeReviews.slice(0, 8)
+  const x = useMotionValue(0)
+  const [isHovering, setIsHovering] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [contentWidth, setContentWidth] = useState(0)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContentWidth(containerRef.current.scrollWidth / 2)
+    }
+  }, [preview])
+
+  useAnimationFrame(() => {
+    if (isHovering || !contentWidth) return
+    const current = x.get()
+    if (current <= -contentWidth) {
+      x.set(0)
+    } else {
+      x.set(current - 0.35)
+    }
+  })
+
+  const starRow = (rating: number) => (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map(i => (
+        <Star
+          key={i}
+          className={`w-3 h-3 ${i <= rating ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
+        />
+      ))}
+    </div>
+  )
+
+  const card = (review: any) => (
+    <div
+      key={review.id}
+      className="w-[340px] shrink-0 border border-surface-border bg-white p-6 select-none"
+    >
+      <div className="flex items-center gap-4 mb-5">
+        {review.photo_url ? (
+          <img src={review.photo_url} alt={review.reviewer_name} className="w-12 h-12 object-cover border border-surface-border shrink-0" />
+        ) : (
+          <div className="w-12 h-12 bg-jade-50 flex items-center justify-center text-jade-700 font-bold text-xs font-mono shrink-0">
+            {review.reviewer_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-slate-900 truncate">{review.reviewer_name}</p>
+          <div className="mt-1">{starRow(review.rating)}</div>
+        </div>
+      </div>
+      <p className="text-xs text-slate-500 leading-relaxed line-clamp-4">{review.testimonial}</p>
+      {review.product_used && (
+        <p className="text-[10px] text-slate-400 mt-4 pt-4 border-t border-surface-border">
+          Product: <span className="font-medium text-slate-600 truncate">{review.product_used}</span>
+        </p>
+      )}
+    </div>
+  )
 
   return (
     <section className="py-28 bg-white" id="reviews-preview">
@@ -109,50 +167,26 @@ function ReviewsPreview() {
             ))}
           </div>
         ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          <div
+            ref={containerRef}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            className="overflow-hidden cursor-grab active:cursor-grabbing"
           >
-            {preview.map(review => {
-              const initials = review.reviewer_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
-              return (
-                <motion.div
-                  key={review.id}
-                  variants={fadeUp}
-                  className="border border-surface-border bg-white p-6"
-                >
-                  <div className="flex items-center gap-4 mb-5">
-                    {review.photo_url ? (
-                      <img src={review.photo_url} alt={review.reviewer_name} className="w-12 h-12 object-cover border border-surface-border" />
-                    ) : (
-                      <div className="w-12 h-12 bg-jade-50 flex items-center justify-center text-jade-700 font-bold text-xs font-mono">
-                        {initials}
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm font-semibold text-slate-900">{review.reviewer_name}</p>
-                      <div className="flex items-center gap-0.5 mt-1">
-                        {[1, 2, 3, 4, 5].map(i => (
-                          <Star
-                            key={i}
-                            className={`w-3 h-3 ${i <= review.rating ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-4">{review.testimonial}</p>
-                  {review.product_used && (
-                    <p className="text-[10px] text-slate-400 mt-4 pt-4 border-t border-surface-border">
-                      Product: <span className="font-medium text-slate-600">{review.product_used}</span>
-                    </p>
-                  )}
-                </motion.div>
-              )
-            })}
-          </motion.div>
+            <motion.div
+              drag="x"
+              dragElastic={0.05}
+              dragConstraints={{ left: -(contentWidth || 0), right: 0 }}
+              style={{ x }}
+              onDragStart={() => setIsHovering(true)}
+              onDragEnd={() => setIsHovering(false)}
+              className="flex gap-6 w-max"
+            >
+              {[...preview, ...preview].map((review, i) => (
+                <div key={`${review.id}-${i}`}>{card(review)}</div>
+              ))}
+            </motion.div>
+          </div>
         )}
         <div className="text-center mt-12">
           <Link
