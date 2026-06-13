@@ -11,11 +11,6 @@ export function useProducts(category?: string) {
     queryKey: ['products', category],
     queryFn: async () => {
       const mapToProductWithStock = (p: any): ProductWithStock => {
-        // Log individual product if it has stock to see the structure
-        if (p.stock && p.stock.length > 0) {
-          console.log('Found product with stock data:', p.prod_name, p.stock);
-        }
-
         return {
           code: p.prod_code || p.code || '',
           name: p.prod_name || p.name || '',
@@ -46,14 +41,11 @@ export function useProducts(category?: string) {
           ? await inventoryService.getProductsByCategory(category)
           : await inventoryService.getProducts()
         
-        console.log('FULL API RESPONSE:', response);
-
         const rawProducts = response?.results || (Array.isArray(response) ? response : null)
 
         if (rawProducts && Array.isArray(rawProducts)) {
           return rawProducts.map(mapToProductWithStock)
         } else {
-          console.warn('Expected array or results field, got:', response);
           return fallbackFiltered.map(mapToProductWithStock)
         }
       } catch (err) {

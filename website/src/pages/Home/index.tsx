@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion'
-import { Calendar, MapPin, ArrowRight, TrendingUp, BookOpen, Users, Star } from 'lucide-react'
+import { ArrowRight, TrendingUp, BookOpen, Users, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import HeroSection from './HeroSection'
 import AboutSection from './AboutSection'
 import ProductsSection from '@/pages/Products'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Accordion from '@/components/ui/Accordion'
-import Badge from '@/components/ui/Badge'
+import EventCard from '@/pages/Events/EventCard'
 import { useEvents } from '@/hooks/useEvents'
 import { useReviews } from '@/hooks/useReviews'
 import { useFAQ } from '@/hooks/useFAQ'
@@ -55,42 +55,15 @@ function EventsPreview() {
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
             {preview.map(event => (
-              <motion.div
+              <EventCard
                 key={event.id}
-                variants={fadeUp}
-                className="bg-white border border-surface-border hover:border-jade-200 transition-colors"
-              >
-                <div className="p-6">
-                  <div className="flex items-start gap-4 mb-5">
-                    <div className="flex-shrink-0 w-14 h-14 border border-surface-border flex flex-col items-center justify-center bg-surface-subtle">
-                      <span className="text-lg font-bold text-jade-700 font-mono leading-none">
-                        {new Date(event.event_date).getDate().toString().padStart(2, '0')}
-                      </span>
-                      <span className="text-[9px] font-semibold text-slate-500 uppercase tracking-wider">
-                        {new Date(event.event_date).toLocaleString('default', { month: 'short' })}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Badge
-                        variant={event.status === 'upcoming' ? 'blue' : event.status === 'ongoing' ? 'green' : 'gray'}
-                        label={event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                      />
-                      <h3 className="text-sm font-semibold text-slate-900 mt-3 line-clamp-1">{event.title}</h3>
-                    </div>
-                  </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{new Date(event.event_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span className="truncate">{event.location_name}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{event.description}</p>
-                </div>
-              </motion.div>
+                title={event.title}
+                description={event.description}
+                event_date={event.event_date}
+                location_name={event.location_name}
+                status={event.status}
+                event_media={event.event_media || []}
+              />
             ))}
           </motion.div>
         )}

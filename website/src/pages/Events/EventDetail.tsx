@@ -2,22 +2,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, MapPin, Calendar, ExternalLink, Clock } from 'lucide-react'
 import { format } from 'date-fns'
 import Badge from '@/components/ui/Badge'
-import YouTubeEmbed from '@/components/ui/YouTubeEmbed'
-import type { EventStatus } from '@/types/event.types'
+import MediaCarousel from '@/components/ui/MediaCarousel'
+import type { Event } from '@/types/event.types'
 
 interface EventDetailProps {
-  event: {
-    title: string
-    description: string
-    event_date: string
-    event_end_date?: string
-    location_name: string
-    location_address: string
-    maps_link?: string
-    status: EventStatus
-    youtube_url?: string
-    event_media: { media_type: string; url: string }[]
-  } | null
+  event: Event | null
   onClose: () => void
 }
 
@@ -32,6 +21,12 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
 
   const startDate = format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')
   const startTime = format(new Date(event.event_date), 'h:mm a')
+
+  const media = event.event_media && event.event_media.length > 0
+    ? event.event_media
+    : event.youtube_url
+      ? [{ id: 'youtube-fallback', event_id: event.id, media_type: 'youtube' as const, url: event.youtube_url, thumbnail_url: undefined, caption: undefined, sort_order: 0 }]
+      : []
 
   return (
     <AnimatePresence>
@@ -54,15 +49,15 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
           >
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 z-10 w-8 h-8 bg-white border border-surface-border flex items-center justify-center hover:bg-surface-subtle transition-colors"
+              className="absolute top-4 right-4 z-10 w-8 h-8 bg-white border border-surface-border flex items-center justify-center hover:bg-surface-subtle transition-colors rounded"
               aria-label="Close"
             >
               <X className="w-4 h-4 text-slate-500" />
             </button>
 
-            {event.youtube_url ? (
-              <div className="w-full border-b border-surface-border">
-                <YouTubeEmbed url={event.youtube_url} title={event.title} />
+            {media.length > 0 ? (
+              <div className="border-b border-surface-border">
+                <MediaCarousel media={media} variant="detail" />
               </div>
             ) : (
               <div className="h-48 bg-surface-subtle flex items-center justify-center border-b border-surface-border">

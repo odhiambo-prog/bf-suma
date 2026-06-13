@@ -57,6 +57,7 @@ export default function Events() {
                   event_date={event.event_date}
                   location_name={event.location_name}
                   status={event.status}
+                  event_media={event.event_media || []}
                   onViewDetails={() => setSelectedEvent(event)}
                 />
               ))}

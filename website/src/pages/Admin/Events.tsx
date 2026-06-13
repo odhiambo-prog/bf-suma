@@ -76,18 +76,27 @@ export default function AdminEvents() {
   }
 
   async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>, eventId: string) {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = e.target.files
+    if (!files || files.length === 0) return
     setUploading(true)
-    const ext = file.name.split('.').pop()
-    const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const { error } = await supabase.storage.from('event-media').upload(filename, file, { contentType: file.type })
-    if (!error) {
-      const { data: { publicUrl } } = supabase.storage.from('event-media').getPublicUrl(filename)
-      await supabase.from('event_media').insert({ event_id: eventId, media_type: file.type.startsWith('video') ? 'video' : 'image', url: publicUrl })
-      loadEvents()
+    let uploaded = 0
+    for (const file of Array.from(files)) {
+      const ext = file.name.split('.').pop()
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const { error } = await supabase.storage.from('event-media').upload(filename, file, { contentType: file.type })
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from('event-media').getPublicUrl(filename)
+        await supabase.from('event_media').insert({
+          event_id: eventId,
+          media_type: file.type.startsWith('video') ? 'video' : 'image',
+          url: publicUrl,
+        })
+        uploaded++
+      }
     }
     setUploading(false)
+    loadEvents()
+    e.target.value = ''
   }
 
   function openEdit(event: Event) {
@@ -242,37 +251,36 @@ export default function AdminEvents() {
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Media ({event.event_media?.length || 0})</p>
-                  {editing?.id !== event.id && (
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*,video/*"
+                      onChange={e => handleMediaUpload(e, event.id)}
+                      className="hidden"
+                      id={`media-upload-${event.id}`}
+                      disabled={uploading}
+                    />
+                    <label htmlFor={`media-upload-${event.id}`} className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-jade-600 hover:bg-jade-50 rounded-lg cursor-pointer transition-colors">
+                      <Upload className="w-3 h-3" /> {uploading ? 'Uploading...' : 'Upload'}
+                    </label>
+                    <div className="flex gap-1">
                       <input
-                        type="file"
-                        accept="image/*,video/*"
-                        onChange={e => handleMediaUpload(e, event.id)}
-                        className="hidden"
-                        id={`media-upload-${event.id}`}
-                        disabled={uploading}
+                        value={mediaUrl}
+                        onChange={e => setMediaUrl(e.target.value)}
+                        placeholder="Paste URL..."
+                        className="w-40 px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none focus:border-jade-500"
                       />
-                      <label htmlFor={`media-upload-${event.id}`} className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-jade-600 hover:bg-jade-50 rounded-lg cursor-pointer transition-colors">
-                        <Upload className="w-3 h-3" /> Upload
-                      </label>
-                      <div className="flex gap-1">
-                        <input
-                          value={mediaUrl}
-                          onChange={e => setMediaUrl(e.target.value)}
-                          placeholder="Paste URL..."
-                          className="w-40 px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none focus:border-jade-500"
-                        />
-                        <select value={mediaType} onChange={e => setMediaType(e.target.value as any)} className="px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none">
-                          <option value="image">Img</option>
-                          <option value="video">Vid</option>
-                          <option value="youtube">YT</option>
-                        </select>
-                        <button onClick={() => handleAddMedia(event.id)} disabled={!mediaUrl || uploading} className="px-2 py-1.5 bg-jade-600 text-white rounded text-[10px] font-semibold disabled:opacity-50">
-                          Add
-                        </button>
-                      </div>
+                      <select value={mediaType} onChange={e => setMediaType(e.target.value as any)} className="px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none">
+                        <option value="image">Img</option>
+                        <option value="video">Vid</option>
+                        <option value="youtube">YT</option>
+                      </select>
+                      <button onClick={() => handleAddMedia(event.id)} disabled={!mediaUrl || uploading} className="px-2 py-1.5 bg-jade-600 text-white rounded text-[10px] font-semibold disabled:opacity-50">
+                        Add
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
                 {event.event_media && event.event_media.length > 0 && (
                   <div className="flex flex-wrap gap-2">
