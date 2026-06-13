@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { useLocation, Outlet } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Navbar from './Navbar'
@@ -8,6 +8,10 @@ export default function Layout() {
   const location = useLocation()
 
   useEffect(() => {
+    window.history.scrollRestoration = 'manual'
+  }, [])
+
+  useLayoutEffect(() => {
     window.scrollTo(0, 0)
   }, [location.pathname])
 
