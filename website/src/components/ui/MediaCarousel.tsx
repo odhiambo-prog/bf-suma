@@ -30,7 +30,7 @@ export default function MediaCarousel({
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
   const [paused, setPaused] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setInterval>>()
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const goTo = useCallback((i: number) => {
     setDirection(i > index ? 1 : -1)

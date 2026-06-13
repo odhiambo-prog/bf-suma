@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, TrendingUp, BookOpen, Users, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -7,6 +8,7 @@ import ProductsSection from '@/pages/Products'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Accordion from '@/components/ui/Accordion'
 import EventCard from '@/pages/Events/EventCard'
+import EventDetail from '@/pages/Events/EventDetail'
 import { useEvents } from '@/hooks/useEvents'
 import { useReviews } from '@/hooks/useReviews'
 import { useFAQ } from '@/hooks/useFAQ'
@@ -30,6 +32,7 @@ function EventsPreview() {
   const { data: events = [], isLoading } = useEvents()
   const safeEvents = Array.isArray(events) ? events : []
   const preview = safeEvents.slice(0, 3)
+  const [selectedEvent, setSelectedEvent] = useState<any>(null)
 
   return (
     <section className="py-28 bg-surface-subtle" id="events-preview">
@@ -63,6 +66,7 @@ function EventsPreview() {
                 location_name={event.location_name}
                 status={event.status}
                 event_media={event.event_media || []}
+                onViewDetails={() => setSelectedEvent(event)}
               />
             ))}
           </motion.div>
@@ -76,6 +80,11 @@ function EventsPreview() {
           </Link>
         </div>
       </div>
+
+      <EventDetail
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+      />
     </section>
   )
 }

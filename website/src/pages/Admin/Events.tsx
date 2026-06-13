@@ -15,7 +15,7 @@ export default function AdminEvents() {
   const [form, setForm] = useState({
     title: '', description: '', event_date: '', event_end_date: '',
     location_name: '', location_address: '', maps_link: '', status: 'upcoming' as EventStatus,
-    youtube_url: '', is_published: true,
+    is_published: true,
   })
   const [mediaUrl, setMediaUrl] = useState('')
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'youtube'>('image')
@@ -31,7 +31,7 @@ export default function AdminEvents() {
   }
 
   function resetForm() {
-    setForm({ title: '', description: '', event_date: '', event_end_date: '', location_name: '', location_address: '', maps_link: '', status: 'upcoming', youtube_url: '', is_published: true })
+    setForm({ title: '', description: '', event_date: '', event_end_date: '', location_name: '', location_address: '', maps_link: '', status: 'upcoming', is_published: true })
     setMediaUrl('')
     setEditing(null)
   }
@@ -105,7 +105,7 @@ export default function AdminEvents() {
       event_date: event.event_date.slice(0, 16), event_end_date: event.event_end_date?.slice(0, 16) || '',
       location_name: event.location_name, location_address: event.location_address,
       maps_link: event.maps_link || '', status: event.status,
-      youtube_url: event.youtube_url || '', is_published: event.is_published,
+      is_published: event.is_published,
     })
     setEditing(event)
     setShowForm(true)
@@ -178,10 +178,6 @@ export default function AdminEvents() {
                 <div>
                   <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Maps Link</label>
                   <input value={form.maps_link} onChange={e => setForm({...form, maps_link: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="https://maps.google.com/..." />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">YouTube URL</label>
-                  <input value={form.youtube_url} onChange={e => setForm({...form, youtube_url: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="https://youtube.com/watch?v=..." />
                 </div>
               </div>
 
