@@ -33,7 +33,7 @@ const cardVariants = {
       duration: 0.4,
     },
   },
-}
+} as const;
 
 interface ProductsSectionProps {
   preview?: boolean
@@ -125,7 +125,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-12"
           >
             <AnimatePresence mode="popLayout">
-              {displayProducts.map((product, i) => (
+              {displayProducts.map((product) => (
                 <motion.div
                   key={product.code}
                   variants={cardVariants}

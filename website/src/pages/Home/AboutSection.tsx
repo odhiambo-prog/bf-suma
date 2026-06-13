@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 export default function AboutSection() {
