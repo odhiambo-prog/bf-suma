@@ -17,13 +17,6 @@ const benefits = [
   { image: '/images/benefits/health-coaching.jpeg', title: 'Health Coaching', desc: 'Personal health coaching support from our experts.' },
 ]
 
-const resources = [
-  { title: 'Product Catalog', desc: 'Complete product catalog with descriptions and pricing.', link: '#' },
-  { title: 'Training Materials', desc: 'Access our library of training videos and guides.', link: '#' },
-  { title: 'WhatsApp Community', desc: 'Join our distributor WhatsApp group for support.', link: '#' },
-  { title: 'Support Contact', desc: 'Get help from our distributor support team.', link: '#' },
-]
-
 export default function JoinUs() {
   const { data: companyEvents = [] } = useCompanyEvents()
 
@@ -168,22 +161,25 @@ export default function JoinUs() {
 
       <section className="py-16 bg-surface-subtle">
         <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader title="Tools & Resources" subtitle="Everything you need to succeed as a distributor." />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {resources.map((resource, i) => (
-              <motion.a
-                key={i}
-                href={resource.link}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.3 }}
-                className="bg-white border border-surface-border p-6 hover:border-jade-200 transition-colors"
+          <SectionHeader title="Tools You Need" subtitle="Everything you need to succeed as a distributor." />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mt-12">
+            <div className="rounded-xl shadow-md border border-surface-border overflow-hidden bg-white">
+              <YouTubeEmbed url="https://www.youtube.com/watch?v=8ZDFHreU4bQ" title="Tools You Need" />
+            </div>
+            <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
+              <p>To start your business and aim for success, you would need to find the right market and products, acquire the necessary skills, and have an excellent Omega Speedmaster model platform and efficient system support. BF Suma has it all prepared for you.</p>
+              <p>With more people becoming aware of its benefits, the health product industry is growing daily. BF Suma equips superb quality health supplements with a strong R&amp;D.</p>
+              <p>By becoming a BF Suma Distributor, you may enter different training courses locally or overseas to develop the skills you need to be a thriving business owner. From the necessary sales &amp; marketing plans to business planning, leadership, presentation skills, team building, event organization techniques, and more.</p>
+              <p>We're a big family, and we've always got your back! You have support from your network, the local office, training, R&amp;D, quality assurance teams, and cutting-edge back-end IT systems for your company's development.</p>
+              <a
+                href="/distributor-agreement.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-jade-600 hover:text-jade-700 text-xs font-semibold tracking-widest uppercase transition-all mt-4"
               >
-                <h3 className="text-sm font-semibold text-slate-900 mb-2">{resource.title}</h3>
-                <p className="text-xs text-slate-500">{resource.desc}</p>
-              </motion.a>
-            ))}
+                Read Distributor Agreement →
+              </a>
+            </div>
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
@@ -41,24 +41,24 @@ export default function HeroSection() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={heroImages[index]}
-          initial={{ opacity: 0, scale: 1.15 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5, ease: 'easeInOut' }}
-          className="absolute inset-0"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/60 to-slate-900/30 z-10" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent z-10" />
+      <div className="absolute inset-0 overflow-hidden">
+        {heroImages.map((src, i) => (
           <img
-            src={heroImages[index]}
+            key={src}
+            src={src}
             alt=""
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ease-in-out"
+            style={{
+              opacity: i === index ? 1 : 0,
+              transform: i === index ? 'scale(1)' : 'scale(1.1)',
+              transitionProperty: 'opacity, transform',
+              zIndex: i === index ? 1 : 0,
+            }}
           />
-        </motion.div>
-      </AnimatePresence>
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/60 to-slate-900/30 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent z-10" />
+      </div>
 
       <div className="absolute top-1/3 -left-32 w-72 h-72 bg-jade-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-56 h-56 bg-cobalt-600/10 rounded-full blur-3xl pointer-events-none" />

@@ -45,7 +45,7 @@ export default function EventCard({
     >
       {event_media && event_media.length > 0 && (
         <div className="border-b border-surface-border">
-          <MediaCarousel media={event_media} variant="card" />
+          <MediaCarousel media={event_media} variant="card" onItemClick={onViewDetails} />
         </div>
       )}
 

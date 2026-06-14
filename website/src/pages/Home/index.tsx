@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
-import { ArrowRight, TrendingUp, BookOpen, Users, Star } from 'lucide-react'
+import { ArrowRight, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import HeroSection from './HeroSection'
 import AboutSection from './AboutSection'
@@ -17,15 +17,6 @@ import { SHOP_CONFIG } from '@/config/shop.config'
 const containerVariants = {
   visible: {
     transition: { staggerChildren: 0.08 },
-  },
-}
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' as const },
   },
 }
 
@@ -249,47 +240,57 @@ function FAQPreview() {
 }
 
 const previewBenefits = [
-  { icon: TrendingUp, title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
-  { icon: BookOpen, title: 'Exclusive Training', desc: 'Access to comprehensive training materials and workshops.' },
-  { icon: Users, title: 'Global Network', desc: 'Be part of an international community of health entrepreneurs.' },
+  { image: '/images/benefits/commission.jpg', title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
+  { image: '/images/benefits/exclusive-training.jpg', title: 'Exclusive Training', desc: 'Access to comprehensive training materials and workshops.' },
+  { image: '/images/benefits/global-network.jpg', title: 'Global Network', desc: 'Be part of an international community of health entrepreneurs.' },
+  { image: '/images/benefits/performance-bonuses.jpg', title: 'Performance Bonuses', desc: 'Monthly and quarterly bonuses for top performers.' },
+  { image: '/images/benefits/free-sample.png', title: 'Free Product Samples', desc: 'Receive complimentary product samples for personal use.' },
+  { image: '/images/benefits/health-coaching.jpeg', title: 'Health Coaching', desc: 'Personal health coaching support from our experts.' },
 ]
 
 function JoinUsPreview() {
   return (
-    <section className="py-28 bg-white" id="join-preview">
+    <section className="py-28 bg-surface-subtle" id="join-preview">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader
           title="Become a Distributor"
           subtitle="Turn your passion for health into a rewarding business opportunity."
           eyebrow="Join the Network"
         />
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
-        >
-          {previewBenefits.map((benefit, i) => {
-            const Icon = benefit.icon
-            return (
-              <motion.div
-                key={i}
-                variants={fadeUp}
-                className="border border-surface-border bg-white p-8"
-              >
-                <Icon className="w-8 h-8 text-jade-600 mb-6" strokeWidth={1.5} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+          {previewBenefits.map((benefit, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05, duration: 0.3 }}
+              className="bg-white border border-surface-border overflow-hidden flex flex-col"
+            >
+              <div className="relative h-52 overflow-hidden bg-slate-100">
+                <div
+                  className="absolute inset-0 scale-150 blur-2xl bg-center bg-cover"
+                  style={{ backgroundImage: `url(${benefit.image})` }}
+                />
+                <img
+                  src={benefit.image}
+                  alt={benefit.title}
+                  className="relative z-10 w-full h-full object-contain p-4"
+                />
+              </div>
+              <div className="p-6 flex-1">
                 <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
                 <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
-              </motion.div>
-            )
-          })}
-        </motion.div>
-        <div className="text-center">
+              </div>
+            </motion.div>
+          ))}
+        </div>
+        <div className="text-center mt-12">
           <Link
             to="/join-us"
             className="inline-flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
           >
-            Explore the Program <ArrowRight className="w-3.5 h-3.5" />
+            Join Us <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
