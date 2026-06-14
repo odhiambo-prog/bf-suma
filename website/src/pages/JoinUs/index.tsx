@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, TrendingUp, BookOpen, Users, Award, Gift, HeartHandshake } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
-import Carousel from '@/components/ui/Carousel'
 import MediaCarousel from '@/components/ui/MediaCarousel'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { useCompanyEvents } from '@/hooks/useCompanyEvents'
@@ -26,38 +25,6 @@ const resources = [
 
 export default function JoinUs() {
   const { data: companyEvents = [] } = useCompanyEvents()
-
-  const eventSlides = companyEvents.map(event => {
-    const media: EventMedia[] = (event.company_event_media || []).map((m: CompanyEventMedia) => ({
-      id: m.id,
-      event_id: event.id,
-      media_type: m.media_type,
-      url: m.url,
-      caption: m.caption,
-      sort_order: m.sort_order,
-    }))
-    if (event.youtube_url) {
-      media.push({
-        id: `${event.id}-youtube`,
-        event_id: event.id,
-        media_type: 'youtube',
-        url: event.youtube_url,
-        sort_order: media.length,
-      })
-    }
-
-    return (
-      <div key={event.id} className="px-1">
-        <div className="bg-white border border-surface-border h-full">
-          <MediaCarousel media={media} variant="card" />
-          <div className="p-6">
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
-            <p className="text-xs text-slate-500 line-clamp-3">{event.description}</p>
-          </div>
-        </div>
-      </div>
-    )
-  })
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
@@ -151,14 +118,36 @@ export default function JoinUs() {
         <section className="py-28 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <SectionHeader title="Our Success Stories" subtitle="Company events and gatherings that showcase the power of the BF SUMA community." />
-            <Carousel
-              slides={eventSlides}
-              autoPlay
-              showArrows
-              showDots={false}
-              slideWidth="85%"
-              className="max-w-5xl mx-auto"
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {companyEvents.map(event => {
+                const media: EventMedia[] = (event.company_event_media || []).map((m: CompanyEventMedia) => ({
+                  id: m.id,
+                  event_id: event.id,
+                  media_type: m.media_type,
+                  url: m.url,
+                  caption: m.caption,
+                  sort_order: m.sort_order,
+                }))
+                if (event.youtube_url) {
+                  media.push({
+                    id: `${event.id}-youtube`,
+                    event_id: event.id,
+                    media_type: 'youtube',
+                    url: event.youtube_url,
+                    sort_order: media.length,
+                  })
+                }
+                return (
+                  <div key={event.id} className="bg-white border border-surface-border overflow-hidden">
+                    <MediaCarousel media={media} variant="card" />
+                    <div className="p-6">
+                      <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
+                      <p className="text-xs text-slate-500 line-clamp-3">{event.description}</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </section>
       )}
