@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail } from 'lucide-react'
 import { SHOP_CONFIG } from '@/config/shop.config'
+import type { ReactNode } from 'react'
 
 const quickLinks = [
   { name: 'Home', href: '/' },
@@ -18,7 +19,7 @@ const socialLinks = [
   { name: 'Facebook', href: '#' },
 ]
 
-const socialIcons: Record<string, JSX.Element> = {
+const socialIcons: Record<string, ReactNode> = {
   Instagram: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
