@@ -10,6 +10,7 @@ interface MediaCarouselProps {
   autoPlay?: boolean
   interval?: number
   onItemClick?: () => void
+  className?: string
 }
 
 const slideVariants = {
@@ -24,6 +25,7 @@ export default function MediaCarousel({
   autoPlay = true,
   interval = 5000,
   onItemClick,
+  className,
 }: MediaCarouselProps) {
   const items = media || []
   const [index, setIndex] = useState(0)
@@ -76,7 +78,7 @@ export default function MediaCarousel({
   return (
     <>
       <div
-        className="relative overflow-hidden bg-slate-100 group"
+        className={`relative overflow-hidden bg-slate-100 group ${className || ''}`}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
