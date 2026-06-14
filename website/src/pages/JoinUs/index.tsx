@@ -103,7 +103,7 @@ export default function JoinUs() {
                   transition={{ delay: i * 0.05, duration: 0.3 }}
                   className="bg-white border border-surface-border overflow-hidden"
                 >
-                  <img src={benefit.image} alt={benefit.title} className="w-full h-48 object-cover" />
+                  <img src={benefit.image} alt={benefit.title} className="w-full block" />
                   <div className="p-6">
                     <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
                     <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
