@@ -49,7 +49,7 @@ export default function JoinUs() {
         />
       </section>
 
-      <section className="py-16 bg-white">
+      <section className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <a
             href={SHOP_CONFIG.distributorProgram.ctaLink}
@@ -62,14 +62,14 @@ export default function JoinUs() {
         </div>
       </section>
 
-      <section className="py-28 bg-white">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader
             title="Program Overview"
             subtitle="The Eagle Distributor Program is designed for entrepreneurs, health enthusiasts, and anyone seeking financial independence through wellness."
             align="left"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mt-10">
             <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
               <p>BF SUMA's distributor program offers you the opportunity to build a thriving business while making a positive impact on people's health.</p>
               <p>As a distributor, you'll have access to premium products, comprehensive training, and a supportive community of like-minded entrepreneurs.</p>
@@ -89,7 +89,7 @@ export default function JoinUs() {
         </div>
       </section>
 
-      <section className="py-28 bg-surface-subtle">
+      <section className="py-16 bg-surface-subtle">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader title="Benefits & Perks" subtitle="What you get when you join the Eagle Distributor Network." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -116,7 +116,7 @@ export default function JoinUs() {
       </section>
 
       {companyEvents.length > 0 && (
-        <section className="py-28 bg-white">
+        <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-6">
             <SectionHeader title="Our Success Stories" subtitle="Company events and gatherings that showcase the power of the BF SUMA community." />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,7 +154,7 @@ export default function JoinUs() {
         </section>
       )}
 
-      <section className="py-28 bg-surface-subtle">
+      <section className="py-16 bg-surface-subtle">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader title="Tools & Resources" subtitle="Everything you need to succeed as a distributor." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
