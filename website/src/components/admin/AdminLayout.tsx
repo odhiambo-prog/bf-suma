@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, Calendar, HelpCircle, Star, MapPin, 
-  Users, Image, LogOut, Menu, X, ChevronRight 
+  Users, Image, UserCircle, LogOut, Menu, X, ChevronRight 
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -16,6 +16,7 @@ const navItems = [
   { name: 'Branches', href: '/admin/branches', icon: MapPin },
   { name: 'Company Events', href: '/admin/company-events', icon: Users },
   { name: 'Hero Carousel', href: '/admin/hero', icon: Image },
+  { name: 'Team', href: '/admin/team', icon: UserCircle },
 ]
 
 export default function AdminLayout() {

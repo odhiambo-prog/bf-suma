@@ -22,6 +22,7 @@ import AdminReviews from '@/pages/Admin/Reviews'
 import AdminBranches from '@/pages/Admin/Branches'
 import AdminCompanyEvents from '@/pages/Admin/CompanyEvents'
 import AdminHeroCarousel from '@/pages/Admin/HeroCarousel'
+import AdminTeam from '@/pages/Admin/Team'
 
 export default function App() {
   return (
@@ -50,6 +51,7 @@ export default function App() {
                 <Route path="branches" element={<AdminBranches />} />
                 <Route path="company-events" element={<AdminCompanyEvents />} />
                 <Route path="hero" element={<AdminHeroCarousel />} />
+                <Route path="team" element={<AdminTeam />} />
               </Route>
             </Route>
           </Routes>

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import SectionHeader from '@/components/ui/SectionHeader'
+import { useTeamMembers } from '@/hooks/useTeamMembers'
 
 const values = [
   { title: 'Integrity', desc: 'We uphold the highest standards of honesty and transparency in everything we do.' },
@@ -8,16 +9,8 @@ const values = [
   { title: 'Innovation', desc: 'Continuously researching and bringing the latest wellness innovations to Nairobi.' },
 ]
 
-const team = [
-  { name: 'Grace Akinyi', role: 'General Manager', initials: 'GA' },
-  { name: 'Peter Kamau', role: 'Operations Lead', initials: 'PK' },
-  { name: 'Faith Wanjiku', role: 'Wellness Consultant', initials: 'FW' },
-  { name: 'James Ochieng', role: 'Distributor Relations', initials: 'JO' },
-  { name: 'Sarah Nyambura', role: 'Marketing Coordinator', initials: 'SN' },
-  { name: 'David Mwangi', role: 'Training & Development', initials: 'DM' },
-]
-
 export default function About() {
+  const { data: team = [] } = useTeamMembers()
 
   return (
     <div className="min-h-screen bg-surface">
@@ -83,30 +76,43 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-28 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader title="Meet the Team" subtitle="The people behind BF SUMA Nairobi, committed to your wellness journey." />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-12">
-            {team.map((member, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-                className="group text-center"
-              >
-                <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-jade-400 to-cobalt-500 flex items-center justify-center mb-4 shadow-lg group-hover:scale-105 transition-transform duration-300">
-                  <span className="text-xl md:text-2xl font-bold text-white tracking-wide">{member.initials}</span>
-                  <div className="absolute inset-0 rounded-full border-2 border-white/20 group-hover:border-jade-300 transition-colors duration-300" />
-                </div>
-                <h3 className="text-sm font-semibold text-slate-900 mb-0.5">{member.name}</h3>
-                <p className="text-[11px] text-slate-500">{member.role}</p>
-              </motion.div>
-            ))}
+      {team.length > 0 && (
+        <section className="py-28 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            <SectionHeader title="Faces of Eagle Team" subtitle="The people behind BF SUMA Nairobi, committed to your wellness journey." />
           </div>
-        </div>
-      </section>
+          <div className="relative mt-12">
+            <div className="overflow-x-auto pb-4 hide-scrollbar cursor-grab active:cursor-grabbing"
+              onMouseDown={(e) => { const el = e.currentTarget; let startX = e.pageX - el.offsetLeft, scrollLeft = el.scrollLeft; const onMove = (ev: MouseEvent) => { ev.preventDefault(); el.scrollLeft = scrollLeft - (ev.pageX - startX); }; const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }; document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp); }}
+            >
+              <div className="flex gap-10 px-6" style={{ width: 'max-content' }}>
+                {team.map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex-shrink-0 w-28 group text-center"
+                  >
+                    <div className="relative mx-auto w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-jade-400 to-cobalt-500 flex items-center justify-center mb-4 shadow-lg group-hover:scale-105 transition-transform duration-300 overflow-hidden">
+                      <span className="absolute inset-0 flex items-center justify-center text-xl md:text-2xl font-bold text-white tracking-wide">
+                        {member.name.charAt(0)}
+                      </span>
+                      {member.photo_url && (
+                        <img
+                          src={member.photo_url}
+                          alt={member.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                        />
+                      )}
+                      <div className="absolute inset-0 rounded-full border-2 border-white/20 group-hover:border-jade-300 transition-colors duration-300 pointer-events-none" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-slate-900 mb-0.5">{member.name}</h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }
