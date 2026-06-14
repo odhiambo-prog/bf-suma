@@ -10,9 +10,10 @@ interface CarouselProps {
   showArrows?: boolean
   showDots?: boolean
   className?: string
+  slideWidth?: string
 }
 
-export default function Carousel({ slides, autoPlay, showArrows, showDots, className }: CarouselProps) {
+export default function Carousel({ slides, autoPlay, showArrows, showDots, className, slideWidth = '100%' }: CarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, align: 'center' },
     autoPlay ? [Autoplay({ delay: 4000, stopOnInteraction: false })] : []
@@ -26,7 +27,7 @@ export default function Carousel({ slides, autoPlay, showArrows, showDots, class
       <div ref={emblaRef} className="overflow-hidden h-full">
         <div className="flex h-full">
           {slides.map((slide, i) => (
-            <div key={i} className="flex-[0_0_100%] min-w-0 h-full">
+            <div key={i} className="min-w-0 h-full px-1.5" style={{ flex: `0 0 ${slideWidth}` }}>
               {slide}
             </div>
           ))}

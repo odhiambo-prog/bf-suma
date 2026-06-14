@@ -156,6 +156,7 @@ export default function JoinUs() {
               autoPlay
               showArrows
               showDots={false}
+              slideWidth="85%"
               className="max-w-5xl mx-auto"
             />
           </div>
