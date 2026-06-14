@@ -119,7 +119,8 @@ export default function JoinUs() {
           <div className="max-w-7xl mx-auto px-6">
             <SectionHeader title="Our Success Stories" subtitle="Company events and gatherings that showcase the power of the BF SUMA community." />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {companyEvents.map(event => {
+              {companyEvents.map((event, i) => {
+                const isLastOdd = companyEvents.length % 2 !== 0 && i === companyEvents.length - 1
                 const media: EventMedia[] = (event.company_event_media || []).map((m: CompanyEventMedia) => ({
                   id: m.id,
                   event_id: event.id,
@@ -138,7 +139,7 @@ export default function JoinUs() {
                   })
                 }
                 return (
-                  <div key={event.id} className="bg-white border border-surface-border overflow-hidden">
+                  <div key={event.id} className={`bg-white border border-surface-border overflow-hidden ${isLastOdd ? 'md:col-span-2' : ''}`}>
                     <MediaCarousel media={media} variant="card" />
                     <div className="p-6">
                       <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
