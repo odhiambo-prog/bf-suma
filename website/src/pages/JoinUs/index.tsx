@@ -2,9 +2,10 @@ import { motion } from 'framer-motion'
 import { ArrowRight, TrendingUp, BookOpen, Users, Award, Gift, HeartHandshake } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Carousel from '@/components/ui/Carousel'
-import YouTubeEmbed from '@/components/ui/YouTubeEmbed'
+import MediaCarousel from '@/components/ui/MediaCarousel'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { useCompanyEvents } from '@/hooks/useCompanyEvents'
+import type { EventMedia } from '@/types/event.types'
 
 const benefits = [
   { icon: TrendingUp, title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
@@ -25,15 +26,28 @@ const resources = [
 export default function JoinUs() {
   const { data: companyEvents = [] } = useCompanyEvents()
 
-  const eventSlides = companyEvents.map(event => (
-    <div key={event.id} className="px-1">
-      <div className="bg-white border border-surface-border p-6 h-full">
-        <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
-        <p className="text-xs text-slate-500 mb-4 line-clamp-3">{event.description}</p>
-        {event.youtube_url && <YouTubeEmbed url={event.youtube_url} title={event.title} />}
+  const eventSlides = companyEvents.map(event => {
+    const media: EventMedia[] = (event.company_event_media || []).map(m => ({
+      id: m.id,
+      event_id: event.id,
+      media_type: m.media_type,
+      url: m.url,
+      caption: m.caption,
+      sort_order: m.sort_order,
+    }))
+
+    return (
+      <div key={event.id} className="px-1">
+        <div className="bg-white border border-surface-border h-full">
+          <MediaCarousel media={media} variant="card" />
+          <div className="p-6">
+            <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
+            <p className="text-xs text-slate-500 line-clamp-3">{event.description}</p>
+          </div>
+        </div>
       </div>
-    </div>
-  ))
+    )
+  })
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
