@@ -69,7 +69,6 @@ export default function JoinUs() {
             title="Program Overview"
             subtitle="The Eagle Distributor Program is designed for entrepreneurs, health enthusiasts, and anyone seeking financial independence through wellness."
             align="center"
-            eyebrow="Get Started"
           />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-12">
             <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
