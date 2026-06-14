@@ -140,7 +140,7 @@ export default function JoinUs() {
                 }
                 return (
                   <div key={event.id} className={`bg-white border border-surface-border overflow-hidden ${isLastOdd ? 'md:col-span-2' : ''}`}>
-                    <MediaCarousel media={media} variant="card" className={isLastOdd ? 'max-h-[280px]' : ''} />
+                    <MediaCarousel media={media} variant="card" className={isLastOdd ? 'max-h-[380px]' : ''} />
                     <div className="p-6">
                       <h4 className="text-sm font-semibold text-slate-900 mb-2">{event.title}</h4>
                       <p className="text-xs text-slate-500 line-clamp-3">{event.description}</p>
