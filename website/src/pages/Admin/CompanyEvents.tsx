@@ -14,6 +14,7 @@ export default function AdminCompanyEvents() {
   const [editing, setEditing] = useState<CompanyEvent | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [mediaUrl, setMediaUrl] = useState('')
+  const [mediaCaption, setMediaCaption] = useState('')
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'youtube'>('image')
   const [form, setForm] = useState({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 })
 
@@ -33,10 +34,10 @@ export default function AdminCompanyEvents() {
     } else {
       const { data } = await supabase.from('company_events').insert(form).select().single()
       if (data && mediaUrl) {
-        await supabase.from('company_event_media').insert({ company_event_id: data.id, media_type: mediaType, url: mediaUrl })
+        await supabase.from('company_event_media').insert({ company_event_id: data.id, media_type: mediaType, url: mediaUrl, caption: mediaCaption || null })
       }
     }
-    setShowForm(false); setEditing(null); setForm({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl('')
+    setShowForm(false); setEditing(null); setForm({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl(''); setMediaCaption('')
     load()
   }
 
@@ -48,8 +49,8 @@ export default function AdminCompanyEvents() {
 
   async function handleAddMedia(eventId: string) {
     if (!mediaUrl) return
-    await supabase.from('company_event_media').insert({ company_event_id: eventId, media_type: mediaType, url: mediaUrl })
-    setMediaUrl(''); load()
+    await supabase.from('company_event_media').insert({ company_event_id: eventId, media_type: mediaType, url: mediaUrl, caption: mediaCaption || null })
+    setMediaUrl(''); setMediaCaption(''); load()
   }
 
   async function handleDeleteMedia(mediaId: string) {
@@ -116,8 +117,8 @@ export default function AdminCompanyEvents() {
                 <span className="text-sm text-slate-600">Published</span>
               </label>
               {!editing && (
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-2">Media URL (optional)</label>
+                <div className="space-y-2">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600">Media (optional)</label>
                   <div className="flex gap-2">
                     <select value={mediaType} onChange={e => setMediaType(e.target.value as any)} className="px-3 py-2 border border-slate-300 rounded-lg text-sm">
                       <option value="image">Image</option>
@@ -126,6 +127,7 @@ export default function AdminCompanyEvents() {
                     </select>
                     <input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="URL" />
                   </div>
+                  <input value={mediaCaption} onChange={e => setMediaCaption(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="Caption (optional)" />
                 </div>
               )}
               <div className="flex gap-3 pt-2">
@@ -170,6 +172,7 @@ export default function AdminCompanyEvents() {
                   </label>
                   <div className="flex gap-1">
                     <input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} placeholder="URL..." className="w-32 px-2 py-1 border border-slate-200 rounded text-[11px] outline-none focus:border-jade-500" />
+                    <input value={mediaCaption} onChange={e => setMediaCaption(e.target.value)} placeholder="Caption..." className="w-24 px-2 py-1 border border-slate-200 rounded text-[11px] outline-none focus:border-jade-500" />
                     <button onClick={() => handleAddMedia(event.id)} disabled={!mediaUrl} className="px-2 py-1 bg-jade-600 text-white rounded text-[10px] font-semibold disabled:opacity-50">Add</button>
                   </div>
                 </div>

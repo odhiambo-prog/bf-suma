@@ -35,6 +35,15 @@ export default function JoinUs() {
       caption: m.caption,
       sort_order: m.sort_order,
     }))
+    if (event.youtube_url) {
+      media.push({
+        id: `${event.id}-youtube`,
+        event_id: event.id,
+        media_type: 'youtube',
+        url: event.youtube_url,
+        sort_order: media.length,
+      })
+    }
 
     return (
       <div key={event.id} className="px-1">

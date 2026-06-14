@@ -9,6 +9,7 @@ interface MediaCarouselProps {
   variant?: 'card' | 'detail'
   autoPlay?: boolean
   interval?: number
+  onItemClick?: () => void
 }
 
 const slideVariants = {
@@ -22,6 +23,7 @@ export default function MediaCarousel({
   variant = 'detail',
   autoPlay = true,
   interval = 5000,
+  onItemClick,
 }: MediaCarouselProps) {
   const items = media || []
   const [index, setIndex] = useState(0)
@@ -94,7 +96,9 @@ export default function MediaCarousel({
                 renderPlayer(current)
               ) : (
                 renderThumbnail(current, () => {
-                  if (current.media_type === 'image') {
+                  if (onItemClick) {
+                    onItemClick()
+                  } else if (current.media_type === 'image') {
                     const imgIdx = imageItems.findIndex(m => m.id === current.id)
                     openLightbox(imgIdx >= 0 ? imgIdx : 0)
                   } else {
@@ -104,6 +108,12 @@ export default function MediaCarousel({
               )}
             </motion.div>
           </AnimatePresence>
+
+          {current.caption && (
+            <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/60 via-black/30 to-transparent px-4 pb-3 pt-8 pointer-events-none">
+              <p className="text-xs text-white/90 text-balance">{current.caption}</p>
+            </div>
+          )}
 
           {items.length > 1 && (
             <>
