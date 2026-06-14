@@ -6,6 +6,7 @@ import MediaCarousel from '@/components/ui/MediaCarousel'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { useCompanyEvents } from '@/hooks/useCompanyEvents'
 import type { EventMedia } from '@/types/event.types'
+import type { CompanyEventMedia } from '@/types/join-us.types'
 
 const benefits = [
   { icon: TrendingUp, title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
@@ -27,7 +28,7 @@ export default function JoinUs() {
   const { data: companyEvents = [] } = useCompanyEvents()
 
   const eventSlides = companyEvents.map(event => {
-    const media: EventMedia[] = (event.company_event_media || []).map(m => ({
+    const media: EventMedia[] = (event.company_event_media || []).map((m: CompanyEventMedia) => ({
       id: m.id,
       event_id: event.id,
       media_type: m.media_type,
