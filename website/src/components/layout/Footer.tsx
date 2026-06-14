@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail, ArrowUpRight } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 const quickLinks = [
@@ -13,11 +13,30 @@ const quickLinks = [
 ]
 
 const socialLinks = [
-  { name: 'Facebook', href: SHOP_CONFIG.social.facebook },
-  { name: 'Instagram', href: SHOP_CONFIG.social.instagram },
-  { name: 'TikTok', href: SHOP_CONFIG.social.tiktok },
-  { name: 'YouTube', href: SHOP_CONFIG.social.youtube },
+  { name: 'Instagram', href: 'https://instagram.com/bfsumaeagleshop' },
+  { name: 'X', href: '#' },
+  { name: 'Facebook', href: '#' },
 ]
+
+const socialIcons: Record<string, JSX.Element> = {
+  Instagram: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  X: (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  ),
+  Facebook: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  ),
+}
 
 export default function Footer() {
   return (
@@ -37,10 +56,14 @@ export default function Footer() {
                 <a
                   key={social.name}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-9 h-9 border border-slate-700 flex items-center justify-center hover:border-jade-500 hover:text-jade-500 transition-colors group"
                   aria-label={social.name}
                 >
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-jade-500 transition-colors" />
+                  <span className="text-slate-500 group-hover:text-jade-500 transition-colors">
+                    {socialIcons[social.name]}
+                  </span>
                 </a>
               ))}
             </div>

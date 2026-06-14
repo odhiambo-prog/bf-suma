@@ -82,10 +82,10 @@ export default function About() {
             <SectionHeader title="Faces of Eagle Team" subtitle="The people behind BF SUMA Nairobi, committed to your wellness journey." />
           </div>
           <div className="relative mt-12">
-            <div className="overflow-x-auto pb-4 hide-scrollbar cursor-grab active:cursor-grabbing"
+            <div className="overflow-x-auto pb-4 hide-scrollbar cursor-grab active:cursor-grabbing flex"
               onMouseDown={(e) => { const el = e.currentTarget; let startX = e.pageX - el.offsetLeft, scrollLeft = el.scrollLeft; const onMove = (ev: MouseEvent) => { ev.preventDefault(); el.scrollLeft = scrollLeft - (ev.pageX - startX); }; const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }; document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp); }}
             >
-              <div className="flex gap-10 px-6" style={{ width: 'max-content' }}>
+              <div className="flex gap-10 px-6 flex-shrink-0 mx-auto">
                 {team.map((member) => (
                   <div
                     key={member.id}
