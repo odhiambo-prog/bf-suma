@@ -3,7 +3,7 @@ import { Plus, Pencil, Trash2, Upload, X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface CompanyEvent {
-  id: string; title: string; description?: string; event_date: string
+  id: string; title: string; description?: string
   youtube_url?: string; is_published: boolean; sort_order: number
   company_event_media: { id: string; media_type: string; url: string }[]
 }
@@ -15,7 +15,7 @@ export default function AdminCompanyEvents() {
   const [showForm, setShowForm] = useState(false)
   const [mediaUrl, setMediaUrl] = useState('')
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'youtube'>('image')
-  const [form, setForm] = useState({ title: '', description: '', event_date: '', youtube_url: '', is_published: true, sort_order: 0 })
+  const [form, setForm] = useState({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 })
 
   useEffect(() => { load() }, [])
 
@@ -36,7 +36,7 @@ export default function AdminCompanyEvents() {
         await supabase.from('company_event_media').insert({ company_event_id: data.id, media_type: mediaType, url: mediaUrl })
       }
     }
-    setShowForm(false); setEditing(null); setForm({ title: '', description: '', event_date: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl('')
+    setShowForm(false); setEditing(null); setForm({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl('')
     load()
   }
 
@@ -71,7 +71,7 @@ export default function AdminCompanyEvents() {
   }
 
   function openEdit(event: CompanyEvent) {
-    setForm({ title: event.title, description: event.description || '', event_date: event.event_date.slice(0, 16), youtube_url: event.youtube_url || '', is_published: event.is_published, sort_order: event.sort_order })
+    setForm({ title: event.title, description: event.description || '', youtube_url: event.youtube_url || '', is_published: event.is_published, sort_order: event.sort_order })
     setEditing(event); setShowForm(true)
   }
 
@@ -82,7 +82,7 @@ export default function AdminCompanyEvents() {
           <h1 className="text-xl font-semibold text-slate-900">Company Events</h1>
           <p className="text-sm text-slate-500 mt-0.5">Distributor program events for the Join Us page.</p>
         </div>
-        <button onClick={() => { setEditing(null); setForm({ title: '', description: '', event_date: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl(''); setShowForm(true) }}
+        <button onClick={() => { setEditing(null); setForm({ title: '', description: '', youtube_url: '', is_published: true, sort_order: 0 }); setMediaUrl(''); setShowForm(true) }}
           className="flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-colors">
           <Plus className="w-3.5 h-3.5" /> New Event
         </button>
@@ -103,15 +103,9 @@ export default function AdminCompanyEvents() {
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none resize-none" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Date & Time</label>
-                  <input type="datetime-local" value={form.event_date} onChange={e => setForm({...form, event_date: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Sort Order</label>
-                  <input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: parseInt(e.target.value) || 0})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
+              <div>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Sort Order</label>
+                <input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: parseInt(e.target.value) || 0})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
               </div>
               <div>
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">YouTube URL</label>
@@ -157,7 +151,6 @@ export default function AdminCompanyEvents() {
                 <div className="flex-1 min-w-0">
                   {!event.is_published && <span className="text-[10px] text-amber-600 font-semibold uppercase tracking-wider mb-1 block">Draft</span>}
                   <h3 className="text-sm font-semibold text-slate-900">{event.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{event.event_date ? new Date(event.event_date).toLocaleDateString() : 'No date'}</p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button onClick={() => openEdit(event)} className="p-2 text-slate-400 hover:text-jade-600 hover:bg-jade-50 rounded-lg"><Pencil className="w-4 h-4" /></button>

@@ -2,7 +2,7 @@ export interface CompanyEvent {
   id: string
   title: string
   description?: string
-  event_date: string
+  event_date?: string
   youtube_url?: string
   is_published: boolean
   sort_order: number

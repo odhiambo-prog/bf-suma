@@ -7,7 +7,6 @@ const fallbackCompanyEvents = [
     id: '1',
     title: 'BF SUMA Global Summit 2026',
     description: 'Annual global summit bringing together distributors and leaders from across the world. Featuring product launches, training sessions, and networking opportunities.',
-    event_date: '2026-09-15T09:00:00Z',
     youtube_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     is_published: true,
     sort_order: 0,
