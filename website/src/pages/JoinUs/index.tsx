@@ -101,10 +101,20 @@ export default function JoinUs() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.3 }}
-                  className="bg-white border border-surface-border overflow-hidden"
+                  className="bg-white border border-surface-border overflow-hidden flex flex-col"
                 >
-                  <img src={benefit.image} alt={benefit.title} className="w-full block" />
-                  <div className="p-6">
+                  <div className="relative h-52 overflow-hidden bg-slate-100">
+                    <div
+                      className="absolute inset-0 scale-150 blur-2xl bg-center bg-cover"
+                      style={{ backgroundImage: `url(${benefit.image})` }}
+                    />
+                    <img
+                      src={benefit.image}
+                      alt={benefit.title}
+                      className="relative z-10 w-full h-full object-contain p-4"
+                    />
+                  </div>
+                  <div className="p-6 flex-1">
                     <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
                     <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
                   </div>
