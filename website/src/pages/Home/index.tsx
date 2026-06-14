@@ -27,7 +27,7 @@ function EventsPreview() {
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
 
   return (
-    <section className="py-28 bg-surface-subtle" id="events-preview">
+    <section className="py-16 md:py-28 bg-surface-subtle" id="events-preview">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader
           title="Events & Workshops"
@@ -119,7 +119,7 @@ function ReviewsPreview() {
   const card = (review: any) => (
     <div
       key={review.id}
-      className="w-[340px] shrink-0 border border-surface-border bg-white p-6 select-none"
+      className="w-[280px] sm:w-[340px] shrink-0 border border-surface-border bg-white p-6 select-none"
     >
       <div className="flex items-center gap-4 mb-5">
         {review.photo_url ? (
@@ -144,7 +144,7 @@ function ReviewsPreview() {
   )
 
   return (
-    <section className="py-28 bg-white" id="reviews-preview">
+    <section className="py-16 md:py-28 bg-white" id="reviews-preview">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader
           title="What Our Customers Say"
@@ -210,7 +210,7 @@ function FAQPreview() {
   const items = preview.map(f => ({ question: f.question, answer: f.answer }))
 
   return (
-    <section className="py-28 bg-surface-subtle" id="faq-preview">
+    <section className="py-16 md:py-28 bg-surface-subtle" id="faq-preview">
       <div className="max-w-3xl mx-auto px-6">
         <SectionHeader
           title="Frequently Asked Questions"
@@ -311,7 +311,7 @@ function BenefitCard({ image, title, desc, i }: { image: string; title: string; 
 
 function JoinUsPreview() {
   return (
-    <section className="py-28 bg-surface-subtle" id="join-preview">
+    <section className="py-16 md:py-28 bg-surface-subtle" id="join-preview">
       <div className="max-w-7xl mx-auto px-6">
         <SectionHeader
           title="Become a Distributor"

@@ -49,7 +49,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
   const displayProducts = preview ? safeProducts.slice(0, 4) : safeProducts
 
   return (
-    <section className="py-28 bg-surface-subtle relative overflow-hidden" id="products-preview">
+    <section className="py-16 md:py-28 bg-surface-subtle relative overflow-hidden" id="products-preview">
       <div className="absolute top-0 right-0 w-96 h-96 bg-jade-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-cobalt-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 

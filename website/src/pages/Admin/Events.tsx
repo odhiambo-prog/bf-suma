@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Plus, Pencil, Trash2, Upload, X, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { computeEventStatus } from '@/lib/events'
 import type { Event, EventStatus } from '@/types/event.types'
 
 const statuses: EventStatus[] = ['upcoming', 'ongoing', 'past']
+
+function effectiveStatus(event: Event): EventStatus {
+  return event.status || computeEventStatus(event)
+}
 
 export default function AdminEvents() {
   const [events, setEvents] = useState<Event[]>([])
@@ -14,7 +19,7 @@ export default function AdminEvents() {
 
   const [form, setForm] = useState({
     title: '', description: '', event_date: '', event_end_date: '',
-    location_name: '', location_address: '', maps_link: '', status: 'upcoming' as EventStatus,
+    location_name: '', location_address: '', maps_link: '', status: '',
     is_published: true,
   })
   const [mediaUrl, setMediaUrl] = useState('')
@@ -33,7 +38,7 @@ export default function AdminEvents() {
   }
 
   function resetForm() {
-    setForm({ title: '', description: '', event_date: '', event_end_date: '', location_name: '', location_address: '', maps_link: '', status: 'upcoming', is_published: true })
+    setForm({ title: '', description: '', event_date: '', event_end_date: '', location_name: '', location_address: '', maps_link: '', status: '', is_published: true })
     setMediaUrl('')
     setEditing(null)
   }
@@ -42,10 +47,12 @@ export default function AdminEvents() {
     e.preventDefault()
     setSaving(true)
 
+    const eventData = { ...form, status: form.status || null }
+
     if (editing) {
-      await supabase.from('events').update(form).eq('id', editing.id)
+      await supabase.from('events').update(eventData).eq('id', editing.id)
     } else {
-      const { data } = await supabase.from('events').insert(form).select().single()
+      const { data } = await supabase.from('events').insert(eventData).select().single()
       if (data && mediaUrl) {
         await supabase.from('event_media').insert({ event_id: data.id, media_type: mediaType, url: mediaUrl })
       }
@@ -112,7 +119,7 @@ export default function AdminEvents() {
       title: event.title, description: event.description || '',
       event_date: event.event_date.slice(0, 16), event_end_date: event.event_end_date?.slice(0, 16) || '',
       location_name: event.location_name, location_address: event.location_address,
-      maps_link: event.maps_link || '', status: event.status,
+      maps_link: event.maps_link || '', status: event.status || '',
       is_published: event.is_published,
     })
     setEditing(event)
@@ -163,10 +170,16 @@ export default function AdminEvents() {
                   <input type="datetime-local" value={form.event_end_date} onChange={e => setForm({...form, event_end_date: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Status</label>
-                  <select value={form.status} onChange={e => setForm({...form, status: e.target.value as EventStatus})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none">
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Status Override</label>
+                  <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none">
+                    <option value="">-- Auto-compute --</option>
                     {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
+                  {!form.status && form.event_date && (
+                    <p className="text-[10px] text-slate-400 mt-1">
+                      Will auto-compute: <span className="font-medium text-slate-500">{computeEventStatus({ event_date: form.event_date, event_end_date: form.event_end_date || null })}</span>
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Published</label>
@@ -232,10 +245,11 @@ export default function AdminEvents() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-full ${
-                      event.status === 'upcoming' ? 'bg-blue-50 text-blue-700' :
-                      event.status === 'ongoing' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'
+                      effectiveStatus(event) === 'upcoming' ? 'bg-blue-50 text-blue-700' :
+                      effectiveStatus(event) === 'ongoing' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'
                     }`}>
-                      {event.status}
+                      {effectiveStatus(event)}
+                      {!event.status && <span className="ml-1 font-normal opacity-60">(auto)</span>}
                     </span>
                     {!event.is_published && <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Draft</span>}
                   </div>

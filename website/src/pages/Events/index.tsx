@@ -33,7 +33,7 @@ export default function Events() {
           />
         </div>
 
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-12 overflow-x-auto pb-2">
           <TabGroup
             tabs={tabs}
             activeTab={activeTab}

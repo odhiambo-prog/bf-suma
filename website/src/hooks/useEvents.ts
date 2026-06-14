@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { SHOP_CONFIG } from '@/config/shop.config'
-import type { EventStatus } from '@/types/event.types'
+import { computeEventStatus } from '@/lib/events'
+import type { EventStatus, Event } from '@/types/event.types'
 
-const fallbackEvents = [
+const fallbackEvents: Event[] = [
   {
     id: '1',
     title: 'Wellness Screening Day',
@@ -48,6 +49,30 @@ const fallbackEvents = [
   },
 ]
 
+const statusPriority: Record<EventStatus, number> = { upcoming: 0, ongoing: 1, past: 2 }
+
+function processAndSort(events: Event[], filterStatus?: EventStatus): Event[] {
+  const withEffective = events.map(e => ({
+    ...e,
+    status: e.status || computeEventStatus(e),
+  }))
+
+  const filtered = filterStatus
+    ? withEffective.filter(e => e.status === filterStatus)
+    : withEffective
+
+  filtered.sort((a, b) => {
+    const pa = statusPriority[a.status]
+    const pb = statusPriority[b.status]
+    if (pa !== pb) return pa - pb
+
+    const diff = new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+    return a.status === 'past' ? -diff : diff
+  })
+
+  return filtered
+}
+
 export function useEvents(status?: EventStatus) {
   const isConfigured = Boolean(SHOP_CONFIG.supabase.url && SHOP_CONFIG.supabase.anonKey)
 
@@ -55,25 +80,22 @@ export function useEvents(status?: EventStatus) {
     queryKey: ['events', status],
     queryFn: async () => {
       if (!isConfigured) {
-        let filtered = [...fallbackEvents]
-        if (status) filtered = filtered.filter(e => e.status === status)
-        return filtered
+        return processAndSort(fallbackEvents, status)
       }
 
-      let query = supabase
+      const { data, error } = await supabase
         .from('events')
         .select('*, event_media(*)')
         .eq('is_published', true)
-        .order('event_date', { ascending: status !== 'past' })
+        .order('event_date', { ascending: true })
 
-      if (status) query = query.eq('status', status)
-
-      const { data, error } = await query
       if (error) {
         console.error('Supabase Events Error:', error)
-        return fallbackEvents
+        return processAndSort(fallbackEvents, status)
       }
-      return Array.isArray(data) && data.length ? data : fallbackEvents
+
+      const rawEvents: Event[] = Array.isArray(data) && data.length ? data : fallbackEvents
+      return processAndSort(rawEvents, status)
     },
   })
 }

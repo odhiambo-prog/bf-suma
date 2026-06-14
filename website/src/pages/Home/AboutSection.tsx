@@ -3,7 +3,7 @@ import { SHOP_CONFIG } from '@/config/shop.config'
 
 export default function AboutSection() {
   return (
-    <section className="py-28 relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50/40 to-stone-100">
+    <section className="py-16 md:py-28 relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50/40 to-stone-100">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_#fef3c7_0%,_transparent_60%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_#fde68a/20_0%,_transparent_50%)]" />
 

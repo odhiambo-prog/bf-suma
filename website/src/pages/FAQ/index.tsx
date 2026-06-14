@@ -32,7 +32,7 @@ export default function FAQ() {
         />
 
         {categories.length > 1 && (
-          <div className="flex justify-center mb-12">
+          <div className="flex justify-center mb-12 overflow-x-auto pb-2">
             <TabGroup
               tabs={categories}
               activeTab={category}

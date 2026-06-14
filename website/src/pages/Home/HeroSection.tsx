@@ -37,7 +37,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative h-screen flex items-center overflow-hidden bg-slate-900"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden bg-slate-900"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -92,18 +92,20 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
         {heroImages.map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
-            className={`transition-all duration-500 rounded-full ${
+            className="p-3 -m-3"
+            aria-label={`Go to slide ${i + 1}`}
+          >
+            <span className={`block transition-all duration-500 rounded-full ${
               i === index
                 ? 'w-8 h-1.5 bg-jade-400'
-                : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'
-            }`}
-            aria-label={`Go to slide ${i + 1}`}
-          />
+                : 'w-1.5 h-1.5 bg-white/40'
+            }`} />
+          </button>
         ))}
       </div>
     </section>

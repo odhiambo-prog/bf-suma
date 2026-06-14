@@ -37,6 +37,15 @@ export default function Navbar() {
     setIsScrolled(!isHome || window.scrollY > 20)
   }, [isHome])
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isMobileMenuOpen])
+
   return (
     <nav className={cn(
       'fixed top-0 left-0 w-full z-50 transition-all duration-300',
@@ -90,7 +99,7 @@ export default function Navbar() {
 
         <button
           className={cn(
-            'md:hidden p-2 transition-colors',
+            'md:hidden p-3 -mr-3 transition-colors',
             isScrolled ? 'text-slate-900' : 'text-white'
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -103,12 +112,13 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute top-full left-0 w-full bg-white border-b border-surface-border shadow-lg"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="absolute top-full left-0 w-full bg-white border-b border-surface-border shadow-lg overflow-hidden"
           >
-            <div className="px-6 py-6 flex flex-col gap-1">
+            <div className="px-6 py-6 flex flex-col gap-1 max-h-[calc(100dvh-5rem)] overflow-y-auto">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.href
                 return (

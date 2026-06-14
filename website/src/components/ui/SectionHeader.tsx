@@ -10,7 +10,7 @@ interface SectionHeaderProps {
 export default function SectionHeader({ title, subtitle, eyebrow, align = 'center' }: SectionHeaderProps) {
   return (
     <div className={cn(
-      'max-w-2xl mb-16',
+      'max-w-2xl mb-10 md:mb-16',
       align === 'center' && 'mx-auto text-center'
     )}>
       {eyebrow && (

@@ -14,9 +14,9 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-surface">
-      <section className="py-28 relative overflow-hidden bg-white">
+      <section className="py-16 md:py-28 relative overflow-hidden bg-white">
         <div
-          className="absolute inset-0 bg-cover bg-center bg-fixed"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'url(/images/aboutusbck.jpg)' }}
         />
         <div className="absolute inset-0 bg-slate-900/70" />
@@ -48,10 +48,10 @@ export default function About() {
         </div>
       </section>
 
-      <section className="py-28 bg-surface-subtle">
+      <section className="py-16 md:py-28 bg-surface-subtle">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader title="Our Values" />
-          <div className="mt-12 -mx-6 sm:mx-0 mb-12">
+          <div className="mt-12 -mx-6 sm:mx-0 mb-12 overflow-hidden sm:rounded-lg">
             <img
               src="/images/about-hero.jpg"
               alt=""
@@ -77,12 +77,12 @@ export default function About() {
       </section>
 
       {team.length > 0 && (
-        <section className="py-28 bg-white overflow-hidden">
+        <section className="py-16 md:py-28 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-6">
             <SectionHeader title="Faces of Eagle Team" subtitle="The people behind BF SUMA Nairobi, committed to your wellness journey." />
           </div>
           <div className="relative mt-12">
-            <div className="overflow-x-auto pb-4 hide-scrollbar cursor-grab active:cursor-grabbing flex"
+            <div className="overflow-x-auto pb-4 hide-scrollbar cursor-grab active:cursor-grabbing flex touch-pan-x"
               onMouseDown={(e) => { const el = e.currentTarget; let startX = e.pageX - el.offsetLeft, scrollLeft = el.scrollLeft; const onMove = (ev: MouseEvent) => { ev.preventDefault(); el.scrollLeft = scrollLeft - (ev.pageX - startX); }; const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }; document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp); }}
             >
               <div className="flex gap-10 px-6 flex-shrink-0 mx-auto">
