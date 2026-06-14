@@ -156,7 +156,7 @@ export default function JoinUs() {
               autoPlay
               showArrows
               showDots={false}
-              className="max-w-4xl mx-auto"
+              className="max-w-5xl mx-auto"
             />
           </div>
         </section>
