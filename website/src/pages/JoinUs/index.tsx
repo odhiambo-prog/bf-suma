@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import MediaCarousel from '@/components/ui/MediaCarousel'
+import YouTubeEmbed from '@/components/ui/YouTubeEmbed'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { useCompanyEvents } from '@/hooks/useCompanyEvents'
 import type { EventMedia } from '@/types/event.types'
@@ -62,14 +63,15 @@ export default function JoinUs() {
         </div>
       </section>
 
-      <section className="py-16 bg-white">
+      <section className="py-20 bg-gradient-to-br from-surface via-white to-jade-50/40">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader
             title="Program Overview"
             subtitle="The Eagle Distributor Program is designed for entrepreneurs, health enthusiasts, and anyone seeking financial independence through wellness."
-            align="left"
+            align="center"
+            eyebrow="Get Started"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mt-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-12">
             <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
               <p>BF SUMA's distributor program offers you the opportunity to build a thriving business while making a positive impact on people's health.</p>
               <p>As a distributor, you'll have access to premium products, comprehensive training, and a supportive community of like-minded entrepreneurs.</p>
@@ -82,8 +84,8 @@ export default function JoinUs() {
                 ))}
               </ul>
             </div>
-            <div className="border border-surface-border">
-              <img src="/images/WhatsApp Image 2026-06-09 at 14.09.14 (3).jpeg" alt="Training Hub" className="w-full" />
+            <div className="rounded-xl shadow-md border border-surface-border overflow-hidden bg-white">
+              <YouTubeEmbed url="https://www.youtube.com/watch?v=A-KwlHViiCw" title="Program Overview" />
             </div>
           </div>
         </div>
