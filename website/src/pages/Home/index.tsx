@@ -248,6 +248,67 @@ const previewBenefits = [
   { image: '/images/benefits/health-coaching.jpeg', title: 'Health Coaching', desc: 'Personal health coaching support from our experts.' },
 ]
 
+function BenefitCard({ image, title, desc, i }: { image: string; title: string; desc: string; i: number }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [shine, setShine] = useState({ x: 50, y: 50, opacity: 0 })
+
+  useEffect(() => {
+    const card = cardRef.current
+    if (!card) return
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = card.getBoundingClientRect()
+      setShine({
+        x: ((e.clientX - rect.left) / rect.width) * 100,
+        y: ((e.clientY - rect.top) / rect.height) * 100,
+        opacity: 1,
+      })
+    }
+    const handleMouseLeave = () => setShine(s => ({ ...s, opacity: 0 }))
+    card.addEventListener('mousemove', handleMouseMove)
+    card.addEventListener('mouseleave', handleMouseLeave)
+    return () => {
+      card.removeEventListener('mousemove', handleMouseMove)
+      card.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [])
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 60 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ type: 'spring', stiffness: 80, damping: 18, delay: i * 0.08 }}
+      whileHover={{ y: -8, transition: { type: 'spring', stiffness: 300, damping: 15 } }}
+      className="group bg-white border border-surface-border overflow-hidden flex flex-col relative cursor-pointer"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
+        style={{
+          opacity: shine.opacity,
+          background: `radial-gradient(circle at ${shine.x}% ${shine.y}%, rgba(13,148,136,0.12) 0%, transparent 60%)`,
+        }}
+      />
+      <div className="relative h-52 overflow-hidden bg-slate-100">
+        <div
+          className="absolute inset-0 scale-150 blur-2xl bg-center bg-cover transition-transform duration-700 group-hover:scale-[1.8]"
+          style={{ backgroundImage: `url(${image})` }}
+        />
+        <img
+          src={image}
+          alt={title}
+          className="relative z-10 w-full h-full object-contain p-4 transition-all duration-500 group-hover:scale-110 group-hover:rotate-1"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-white/0 via-transparent to-transparent z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
+      <div className="p-6 flex-1 transition-colors duration-300 group-hover:bg-jade-50/30">
+        <h3 className="text-sm font-semibold text-slate-900 mb-2">{title}</h3>
+        <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+      </div>
+    </motion.div>
+  )
+}
+
 function JoinUsPreview() {
   return (
     <section className="py-28 bg-surface-subtle" id="join-preview">
@@ -259,39 +320,23 @@ function JoinUsPreview() {
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {previewBenefits.map((benefit, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05, duration: 0.3 }}
-              className="bg-white border border-surface-border overflow-hidden flex flex-col"
-            >
-              <div className="relative h-52 overflow-hidden bg-slate-100">
-                <div
-                  className="absolute inset-0 scale-150 blur-2xl bg-center bg-cover"
-                  style={{ backgroundImage: `url(${benefit.image})` }}
-                />
-                <img
-                  src={benefit.image}
-                  alt={benefit.title}
-                  className="relative z-10 w-full h-full object-contain p-4"
-                />
-              </div>
-              <div className="p-6 flex-1">
-                <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
-              </div>
-            </motion.div>
+            <BenefitCard key={i} {...benefit} i={i} />
           ))}
         </div>
         <div className="text-center mt-12">
-          <Link
-            to="/join-us"
-            className="inline-flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 80, damping: 18, delay: 0.5 }}
           >
-            Join Us <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+            <Link
+              to="/join-us"
+              className="inline-flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
+            >
+              Join Us <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </motion.div>
         </div>
       </div>
     </section>

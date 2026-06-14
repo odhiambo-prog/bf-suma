@@ -12,6 +12,7 @@ import Events from '@/pages/Events'
 import FAQ from '@/pages/FAQ'
 import Reviews from '@/pages/Reviews'
 import JoinUs from '@/pages/JoinUs'
+import Branches from '@/pages/Branches'
 import About from '@/pages/About'
 import AdminLogin from '@/pages/Admin/Login'
 import AdminDashboard from '@/pages/Admin'
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/faq" element={<FAQ />} />
               <Route path="/reviews" element={<Reviews />} />
               <Route path="/join-us" element={<JoinUs />} />
+              <Route path="/branches" element={<Branches />} />
               <Route path="/about" element={<About />} />
             </Route>
 

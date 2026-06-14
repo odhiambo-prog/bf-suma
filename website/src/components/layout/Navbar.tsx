@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'Events', href: '/events' },
   { name: 'Reviews', href: '/reviews' },
   { name: 'Join Us', href: '/join-us' },
+  { name: 'Branches', href: '/branches' },
   { name: 'About', href: '/about' },
   { name: 'FAQ', href: '/faq' },
 ]
