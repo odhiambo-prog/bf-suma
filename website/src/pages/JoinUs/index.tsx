@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, TrendingUp, BookOpen, Users, Award, Gift, HeartHandshake } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
 import MediaCarousel from '@/components/ui/MediaCarousel'
 import { SHOP_CONFIG } from '@/config/shop.config'
@@ -8,12 +8,12 @@ import type { EventMedia } from '@/types/event.types'
 import type { CompanyEventMedia } from '@/types/join-us.types'
 
 const benefits = [
-  { icon: TrendingUp, title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
-  { icon: BookOpen, title: 'Exclusive Training', desc: 'Access to comprehensive training materials and workshops.' },
-  { icon: Users, title: 'Global Network', desc: 'Be part of an international community of health entrepreneurs.' },
-  { icon: Award, title: 'Performance Bonuses', desc: 'Monthly and quarterly bonuses for top performers.' },
-  { icon: Gift, title: 'Free Product Samples', desc: 'Receive complimentary product samples for personal use.' },
-  { icon: HeartHandshake, title: 'Health Coaching', desc: 'Personal health coaching support from our experts.' },
+  { image: '/images/benefits/commission.jpg', title: 'Earn Commissions', desc: 'Competitive commission structure on every sale you make.' },
+  { image: '/images/benefits/exclusive-training.jpg', title: 'Exclusive Training', desc: 'Access to comprehensive training materials and workshops.' },
+  { image: '/images/benefits/global-network.jpg', title: 'Global Network', desc: 'Be part of an international community of health entrepreneurs.' },
+  { image: '/images/benefits/performance-bonuses.jpg', title: 'Performance Bonuses', desc: 'Monthly and quarterly bonuses for top performers.' },
+  { image: '/images/benefits/free-sample.png', title: 'Free Product Samples', desc: 'Receive complimentary product samples for personal use.' },
+  { image: '/images/benefits/health-coaching.jpeg', title: 'Health Coaching', desc: 'Personal health coaching support from our experts.' },
 ]
 
 const resources = [
@@ -94,7 +94,6 @@ export default function JoinUs() {
           <SectionHeader title="Benefits & Perks" subtitle="What you get when you join the Eagle Distributor Network." />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map((benefit, i) => {
-              const Icon = benefit.icon
               return (
                 <motion.div
                   key={i}
@@ -102,11 +101,13 @@ export default function JoinUs() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05, duration: 0.3 }}
-                  className="bg-white border border-surface-border p-8"
+                  className="bg-white border border-surface-border overflow-hidden"
                 >
-                  <Icon className="w-8 h-8 text-jade-600 mb-6" strokeWidth={1.5} />
-                  <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
+                  <img src={benefit.image} alt={benefit.title} className="w-full h-48 object-cover" />
+                  <div className="p-6">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-2">{benefit.title}</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">{benefit.desc}</p>
+                  </div>
                 </motion.div>
               )
             })}
