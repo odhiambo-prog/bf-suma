@@ -75,7 +75,8 @@ export default function JoinUs() {
             <div className="space-y-4 text-sm text-slate-500 leading-relaxed">
               <p>BF SUMA's distributor program offers you the opportunity to build a thriving business while making a positive impact on people's health.</p>
               <p>As a distributor, you'll have access to premium products, comprehensive training, and a supportive community of like-minded entrepreneurs.</p>
-              <ul className="space-y-3 mt-8">
+              <p className="text-xs font-semibold text-slate-700 mt-8 mb-3 uppercase tracking-wider">Who is this for?</p>
+              <ul className="space-y-3">
                 {['Entrepreneurs looking for a new opportunity', 'Health and wellness enthusiasts', 'Those seeking passive income streams', 'Network marketing professionals'].map((item, i) => (
                   <li key={i} className="flex items-start gap-3 text-xs text-slate-600">
                     <span className="w-1.5 h-1.5 rounded-full bg-jade-500 flex-shrink-0 mt-1.5" />
