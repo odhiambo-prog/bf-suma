@@ -26,7 +26,7 @@ export default function Branches() {
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader
             title="Our Branches"
-            subtitle="Visit us at any of our locations across Nairobi."
+            subtitle="Visit us at any of our locations across the country."
           />
         </div>
       </section>
