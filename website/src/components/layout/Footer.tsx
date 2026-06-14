@@ -95,9 +95,18 @@ export default function Footer() {
           <p className="text-xs text-slate-500">
             &copy; 2026 {SHOP_CONFIG.name}. All rights reserved.
           </p>
-          <p className="text-xs text-slate-600 font-mono tracking-tight">
-            BFSUMA
-          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/admin/login"
+              className="text-xs text-slate-600 hover:text-jade-500 transition-colors font-mono tracking-tight"
+            >
+              Admin
+            </Link>
+            <span className="text-xs text-slate-700">|</span>
+            <p className="text-xs text-slate-600 font-mono tracking-tight">
+              BFSUMA
+            </p>
+          </div>
         </div>
       </div>
     </footer>
