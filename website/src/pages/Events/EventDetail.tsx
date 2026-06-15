@@ -20,7 +20,7 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
   if (!event) return null
 
   const startDate = format(new Date(event.event_date), 'EEEE, MMMM d, yyyy')
-  const startTime = format(new Date(event.event_date), 'h:mm a')
+  const startTime = format(new Date(event.event_date), 'h:mm a') + ' EAT'
 
   const media = event.event_media && event.event_media.length > 0
     ? event.event_media
@@ -82,7 +82,7 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
                       <Clock className="w-3.5 h-3.5" />
                       <span>{startTime}</span>
                       {event.event_end_date && (
-                        <span> — {format(new Date(event.event_end_date), 'h:mm a')}</span>
+                        <span> — {format(new Date(event.event_end_date), 'h:mm a')} EAT</span>
                       )}
                     </div>
                   </div>

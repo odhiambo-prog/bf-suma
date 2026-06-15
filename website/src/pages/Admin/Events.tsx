@@ -10,6 +10,18 @@ function effectiveStatus(event: Event): EventStatus {
   return event.status || computeEventStatus(event)
 }
 
+function localToUTC(local: string) {
+  if (!local) return null
+  return new Date(local).toISOString()
+}
+
+function utcToLocal(utc: string) {
+  if (!utc) return ''
+  const d = new Date(utc)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export default function AdminEvents() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,7 +59,7 @@ export default function AdminEvents() {
     e.preventDefault()
     setSaving(true)
 
-    const eventData = { ...form, status: form.status || null }
+    const eventData = { ...form, event_date: localToUTC(form.event_date), event_end_date: localToUTC(form.event_end_date), status: form.status || null }
 
     if (editing) {
       await supabase.from('events').update(eventData).eq('id', editing.id)
@@ -117,7 +129,7 @@ export default function AdminEvents() {
   function openEdit(event: Event) {
     setForm({
       title: event.title, description: event.description || '',
-      event_date: event.event_date.slice(0, 16), event_end_date: event.event_end_date?.slice(0, 16) || '',
+      event_date: utcToLocal(event.event_date), event_end_date: utcToLocal(event.event_end_date || ''),
       location_name: event.location_name, location_address: event.location_address,
       maps_link: event.maps_link || '', status: event.status || '',
       is_published: event.is_published,
