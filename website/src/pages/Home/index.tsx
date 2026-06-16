@@ -12,6 +12,7 @@ import EventDetail from '@/pages/Events/EventDetail'
 import { useEvents } from '@/hooks/useEvents'
 import { useReviews } from '@/hooks/useReviews'
 import { useFAQ } from '@/hooks/useFAQ'
+import { trackWhatsAppClick } from '@/hooks/useAnalytics'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 const containerVariants = {
@@ -193,6 +194,7 @@ function ReviewsPreview() {
             href={`https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace('+', '')}?text=Hi, I'd like to book a wellness consultation.`}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick('cta-book-consultation-home')}
             className="inline-flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all"
           >
             Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
@@ -343,9 +345,15 @@ function JoinUsPreview() {
   )
 }
 
+import SEOHead from '@/components/seo/SEOHead'
+
 export default function Home() {
   return (
     <>
+      <SEOHead
+        title="BF SUMA Eagle Shop — Premium Health Supplements in Nairobi"
+        description="Nairobi's premier wellness destination offering premium, science-backed health supplements, professional health services, and a rewarding Eagle Distributor Program. Visit us at Utumishi House."
+      />
       <HeroSection />
       <AboutSection />
       <ProductsSection preview />

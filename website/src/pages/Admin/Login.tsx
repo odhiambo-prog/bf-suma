@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
+import SEOHead from '@/components/seo/SEOHead'
 import { Shield } from 'lucide-react'
 
 export default function AdminLogin() {
@@ -25,7 +26,9 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+    <>
+      <SEOHead title="Admin Login" description="BF SUMA Eagle Shop admin panel login." noindex />
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-jade-950" />
       <div className="relative w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
@@ -90,5 +93,6 @@ export default function AdminLogin() {
         </a>
       </div>
     </div>
+    </>
   )
 }

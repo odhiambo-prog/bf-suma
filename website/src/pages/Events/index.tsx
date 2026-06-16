@@ -5,6 +5,7 @@ import TabGroup from '@/components/ui/TabGroup'
 import SectionHeader from '@/components/ui/SectionHeader'
 import EventCard from './EventCard'
 import EventDetail from './EventDetail'
+import SEOHead from '@/components/seo/SEOHead'
 import { useEvents } from '@/hooks/useEvents'
 
 const tabs = ['All', 'Upcoming', 'Ongoing', 'Past']
@@ -18,6 +19,10 @@ export default function Events() {
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
+      <SEOHead
+        title="Wellness Events & Workshops — BF SUMA Eagle Shop Nairobi"
+        description="Join BF SUMA Eagle Shop for wellness events, health screening days, distributor training workshops, and community gatherings in Nairobi. Stay connected and elevate your health."
+      />
       <div className="max-w-7xl mx-auto px-6 pb-28">
         <SectionHeader
           title="Events & Workshops"

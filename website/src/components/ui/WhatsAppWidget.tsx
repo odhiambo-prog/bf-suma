@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion'
 import { SHOP_CONFIG } from '@/config/shop.config'
+import { trackWhatsAppClick } from '@/hooks/useAnalytics'
 
 export default function WhatsAppWidget() {
   const phone = SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')
   return (
     <motion.a
+      onClick={() => trackWhatsAppClick('floating-widget')}
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
       transition={{

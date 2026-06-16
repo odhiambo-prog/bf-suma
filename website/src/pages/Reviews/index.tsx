@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, Calendar, ArrowRight } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SEOHead from '@/components/seo/SEOHead'
 import ReviewCard from './ReviewCard'
 import ReviewSubmitForm from './ReviewSubmitForm'
 import { useReviews } from '@/hooks/useReviews'
+import { trackWhatsAppClick, trackFormSubmit } from '@/hooks/useAnalytics'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 export default function Reviews() {
@@ -13,6 +15,10 @@ export default function Reviews() {
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
+      <SEOHead
+        title="Customer Reviews & Testimonials — BF SUMA Eagle Shop Nairobi"
+        description="Read real reviews from BF SUMA customers who transformed their health. Share your own experience with our premium supplements and wellness services in Nairobi."
+      />
       <div className="max-w-7xl mx-auto px-6 pb-28">
         <div className="mb-16">
           <SectionHeader
@@ -23,7 +29,7 @@ export default function Reviews() {
           />
           <div className="flex justify-center mt-8">
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => { setShowForm(true); trackFormSubmit('review-form') }}
               className="flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-5 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
             >
               <MessageCircle className="w-3.5 h-3.5" />
@@ -74,6 +80,7 @@ export default function Reviews() {
               href={`https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace('+', '')}?text=Hi, I'd like to book a wellness consultation.`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackWhatsAppClick('cta-book-consultation')}
               className="inline-flex items-center gap-2 bg-white text-jade-700 hover:bg-jade-50 px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-lg"
             >
               Book a Consultation <ArrowRight className="w-3.5 h-3.5" />

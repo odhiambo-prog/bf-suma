@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { CATEGORIES } from '@/constants'
 import { useProducts } from '@/hooks/useProducts'
 import type { ProductWithStock } from '@/services/inventory.service'
+import SEOHead from '@/components/seo/SEOHead'
 import ProductCard from './ProductCard'
 import ProductModal from './ProductModal'
 import CategoryFilter from './CategoryFilter'
@@ -49,7 +50,12 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
   const displayProducts = preview ? safeProducts.slice(0, 4) : safeProducts
 
   return (
-    <section className="py-16 md:py-28 bg-surface-subtle relative overflow-hidden" id="products-preview">
+    <>
+      <SEOHead
+        title="Premium Health Supplements — BF SUMA Eagle Shop Nairobi"
+        description="Browse our full catalog of science-backed health supplements in Nairobi. From immune boosters and bone & joint care to anti-aging and digestive health. Quality products at our Eagle Shop."
+      />
+      <section className="py-16 md:py-28 bg-surface-subtle relative overflow-hidden" id="products-preview">
       <div className="absolute top-0 right-0 w-96 h-96 bg-jade-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-cobalt-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
@@ -178,6 +184,7 @@ export default function ProductsSection({ preview }: ProductsSectionProps) {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
       />
-    </section>
-  )
-}
+      </section>
+    </>
+    )
+  }

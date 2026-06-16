@@ -39,6 +39,7 @@ export const SHOP_CONFIG = {
     title: 'BF SUMA Eagle Shop | Elevating Wellness in Nairobi',
     description: 'Premium health supplements and wellness services in Nairobi.',
     ogImage: '/og-image.jpg',
+    siteUrl: 'https://eagleshop.co.ke',
   },
 
   features: {

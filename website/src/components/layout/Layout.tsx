@@ -3,9 +3,12 @@ import { useLocation, Outlet } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import WhatsAppWidget from '@/components/ui/WhatsAppWidget'
+import { usePageTracking } from '@/hooks/useAnalytics'
 
 export default function Layout() {
   const location = useLocation()
+
+  usePageTracking()
 
   useLayoutEffect(() => {
     window.history.scrollRestoration = 'manual'

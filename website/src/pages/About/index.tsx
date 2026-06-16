@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SEOHead from '@/components/seo/SEOHead'
 import { useTeamMembers } from '@/hooks/useTeamMembers'
 
 const values = [
@@ -14,6 +15,10 @@ export default function About() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <SEOHead
+        title="About BF SUMA Eagle Shop — Premium Wellness in Nairobi"
+        description="Learn about BF SUMA Eagle Shop's vision, mission, and values. Discover our team of wellness professionals committed to bringing premium health supplements and services to Nairobi."
+      />
       <section className="py-16 md:py-28 relative overflow-hidden bg-white">
         <div
           className="absolute inset-0 bg-cover bg-center"

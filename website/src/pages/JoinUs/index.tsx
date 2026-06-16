@@ -1,8 +1,10 @@
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SEOHead from '@/components/seo/SEOHead'
 import MediaCarousel from '@/components/ui/MediaCarousel'
 import YouTubeEmbed from '@/components/ui/YouTubeEmbed'
+import { trackCTAClick } from '@/hooks/useAnalytics'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { useCompanyEvents } from '@/hooks/useCompanyEvents'
 import type { EventMedia } from '@/types/event.types'
@@ -22,6 +24,10 @@ export default function JoinUs() {
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
+      <SEOHead
+        title="Become a BF SUMA Distributor — Eagle Distributor Program Nairobi"
+        description="Join the BF SUMA Eagle Distributor Network and turn your passion for health into a rewarding business. Earn commissions, get exclusive training, and be part of a global community."
+      />
       <section className="py-8">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h1 className="font-display text-4xl md:text-5xl text-slate-900 mb-4 text-balance">
@@ -49,6 +55,7 @@ export default function JoinUs() {
             href={SHOP_CONFIG.distributorProgram.ctaLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCTAClick('register-now-top')}
             className="inline-flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
           >
             Register Now <ArrowRight className="w-3.5 h-3.5" />
@@ -205,6 +212,7 @@ export default function JoinUs() {
             href={SHOP_CONFIG.distributorProgram.ctaLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackCTAClick('register-now-bottom')}
             className="inline-flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
           >
             Register Now <ArrowRight className="w-3.5 h-3.5" />

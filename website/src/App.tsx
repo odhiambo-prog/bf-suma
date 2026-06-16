@@ -1,8 +1,11 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { queryClient } from '@/lib/queryClient'
 import { AuthProvider } from '@/hooks/useAuth'
+import { initAnalytics } from '@/hooks/useAnalytics'
 import Layout from '@/components/layout/Layout'
 import AuthGuard from '@/components/admin/AuthGuard'
 import AdminLayout from '@/components/admin/AdminLayout'
@@ -25,9 +28,14 @@ import AdminHeroCarousel from '@/pages/Admin/HeroCarousel'
 import AdminTeam from '@/pages/Admin/Team'
 
 export default function App() {
+  useEffect(() => {
+    initAnalytics()
+  }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <HelmetProvider>
         <BrowserRouter>
           <Routes>
             <Route element={<Layout />}>
@@ -56,6 +64,7 @@ export default function App() {
             </Route>
           </Routes>
         </BrowserRouter>
+        </HelmetProvider>
         <Toaster position="bottom-right" />
       </AuthProvider>
     </QueryClientProvider>

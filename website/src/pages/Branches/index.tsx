@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import SectionHeader from '@/components/ui/SectionHeader'
+import SEOHead from '@/components/seo/SEOHead'
 import BranchCard from '@/components/ui/BranchCard'
 import { useBranches } from '@/hooks/useBranches'
 
@@ -22,6 +23,10 @@ export default function Branches() {
 
   return (
     <div className="min-h-screen bg-surface">
+      <SEOHead
+        title="Our Locations — BF SUMA Eagle Shop Branches in Kenya"
+        description="Visit BF SUMA Eagle Shop at our Nairobi locations. Find directions, contact information, and opening hours for all our branches. Premium health supplements at Utumishi House."
+      />
       <section className="pt-28 pb-8 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <SectionHeader

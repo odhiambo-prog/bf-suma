@@ -11,7 +11,8 @@ export default function AdminHeroCarousel() {
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [form, setForm] = useState({ image_url: '', caption: '', link_url: '', is_active: true })
+  const [uploadProgress, setUploadProgress] = useState('')
+  const [form, setForm] = useState({ image_urls: [] as string[], caption: '', link_url: '', is_active: true })
 
   useEffect(() => { load() }, [])
 
@@ -24,10 +25,17 @@ export default function AdminHeroCarousel() {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.image_url) return
+    if (form.image_urls.length === 0) return
     const nextOrder = slides.length
-    await supabase.from('hero_carousel').insert({ ...form, sort_order: nextOrder })
-    setShowForm(false); setForm({ image_url: '', caption: '', link_url: '', is_active: true })
+    const inserts = form.image_urls.map((url, i) => ({
+      image_url: url,
+      caption: form.caption,
+      link_url: form.link_url,
+      is_active: form.is_active,
+      sort_order: nextOrder + i,
+    }))
+    await supabase.from('hero_carousel').insert(inserts)
+    setShowForm(false); setForm({ image_urls: [], caption: '', link_url: '', is_active: true })
     load()
   }
 
@@ -43,17 +51,26 @@ export default function AdminHeroCarousel() {
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
     setUploading(true)
-    const ext = file.name.split('.').pop()
-    const filename = `hero-${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('hero-carousel').upload(filename, file, { contentType: file.type })
-    if (!error) {
-      const { data: { publicUrl } } = supabase.storage.from('hero-carousel').getPublicUrl(filename)
-      setForm({ ...form, image_url: publicUrl })
+
+    const uploaded: string[] = []
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      setUploadProgress(`Uploading ${i + 1} of ${files.length}...`)
+      const ext = file.name.split('.').pop()
+      const filename = `hero-${Date.now()}-${i}.${ext}`
+      const { error } = await supabase.storage.from('hero-carousel').upload(filename, file, { contentType: file.type })
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from('hero-carousel').getPublicUrl(filename)
+        uploaded.push(publicUrl)
+      }
     }
+
+    setForm({ ...form, image_urls: [...form.image_urls, ...uploaded] })
     setUploading(false)
+    setUploadProgress('')
   }
 
   return (
@@ -63,7 +80,7 @@ export default function AdminHeroCarousel() {
           <h1 className="text-xl font-semibold text-slate-900">Hero Carousel</h1>
           <p className="text-sm text-slate-500 mt-0.5">Manage homepage carousel slides.</p>
         </div>
-        <button onClick={() => { setForm({ image_url: '', caption: '', link_url: '', is_active: true }); setShowForm(true) }}
+        <button onClick={() => { setForm({ image_urls: [], caption: '', link_url: '', is_active: true }); setShowForm(true) }}
           className="flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-colors">
           <Plus className="w-3.5 h-3.5" /> Add Slide
         </button>
@@ -77,23 +94,29 @@ export default function AdminHeroCarousel() {
             <h2 className="text-base font-semibold text-slate-900 mb-6">New Slide</h2>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-2">Image</label>
-                {form.image_url ? (
-                  <div className="relative inline-block">
-                    <img src={form.image_url} alt="" className="h-32 rounded-lg border border-slate-200" />
-                    <button type="button" onClick={() => setForm({...form, image_url: ''})} className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center"><X className="w-3 h-3" /></button>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-2">
+                  Images {form.image_urls.length > 0 && <span className="text-jade-600">({form.image_urls.length} selected)</span>}
+                </label>
+                {form.image_urls.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {form.image_urls.map((url, i) => (
+                      <div key={i} className="relative">
+                        <img src={url} alt="" className="h-20 w-28 object-cover rounded-lg border border-slate-200" />
+                        <button type="button" onClick={() => setForm({...form, image_urls: form.image_urls.filter((_, j) => j !== i)})}
+                          className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-jade-400 transition-colors">
-                    <Upload className="w-5 h-5 text-slate-400" />
-                    <span className="text-sm text-slate-500">{uploading ? 'Uploading...' : 'Click to upload image'}</span>
-                    <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} disabled={uploading} />
-                  </label>
                 )}
-              </div>
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Image URL (or upload above)</label>
-                <input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" required />
+                <label className="flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-jade-400 transition-colors">
+                  <Upload className="w-5 h-5 text-slate-400" />
+                  <span className="text-sm text-slate-500">
+                    {uploading ? uploadProgress || 'Uploading...' : form.image_urls.length > 0 ? 'Add more images' : 'Click to upload images'}
+                  </span>
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={handleFileUpload} disabled={uploading} />
+                </label>
               </div>
               <div>
                 <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Caption (optional)</label>
@@ -108,7 +131,9 @@ export default function AdminHeroCarousel() {
                 <span className="text-sm text-slate-600">Active</span>
               </label>
               <div className="flex gap-3 pt-2">
-                <button type="submit" disabled={!form.image_url} className="bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors disabled:opacity-50">Add Slide</button>
+                <button type="submit" disabled={form.image_urls.length === 0} className="bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors disabled:opacity-50">
+                  {form.image_urls.length > 1 ? `Add ${form.image_urls.length} Slides` : 'Add Slide'}
+                </button>
                 <button type="button" onClick={() => setShowForm(false)} className="border border-slate-300 text-slate-600 rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-slate-50 transition-colors">Cancel</button>
               </div>
             </form>
