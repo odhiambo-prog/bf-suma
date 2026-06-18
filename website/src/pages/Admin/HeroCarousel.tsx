@@ -13,6 +13,8 @@ export default function AdminHeroCarousel() {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
   const [uploadError, setUploadError] = useState('')
+  const [dragFrom, setDragFrom] = useState<number | null>(null)
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
   const [form, setForm] = useState({ image_urls: [] as string[], caption: '', link_url: '', is_active: true })
 
   useEffect(() => { load() }, [])
@@ -38,6 +40,22 @@ export default function AdminHeroCarousel() {
     await supabase.from('hero_carousel').insert(inserts)
     setShowForm(false); setForm({ image_urls: [], caption: '', link_url: '', is_active: true })
     load()
+  }
+
+  async function handleReorder(from: number, to: number) {
+    if (from === to) return
+    const reordered = [...slides]
+    const [moved] = reordered.splice(from, 1)
+    reordered.splice(to, 0, moved)
+    setSlides(reordered)
+
+    const updates = reordered.map((slide, i) => ({
+      id: slide.id,
+      sort_order: i,
+    }))
+    for (const u of updates) {
+      await supabase.from('hero_carousel').update({ sort_order: u.sort_order }).eq('id', u.id)
+    }
   }
 
   async function handleDelete(id: string) {
@@ -158,8 +176,17 @@ export default function AdminHeroCarousel() {
       ) : (
         <div className="space-y-3">
           {slides.map((slide, i) => (
-            <div key={slide.id} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4">
-              <div className="flex-shrink-0 text-slate-300 cursor-grab"><GripVertical className="w-4 h-4" /></div>
+            <div
+              key={slide.id}
+              draggable
+              onDragStart={() => { setDragFrom(i); setDragOverIdx(i) }}
+              onDragOver={(e) => { e.preventDefault(); setDragOverIdx(i) }}
+              onDragEnd={() => { if (dragFrom !== null && dragOverIdx !== null && dragFrom !== dragOverIdx) handleReorder(dragFrom, dragOverIdx); setDragFrom(null); setDragOverIdx(null) }}
+              className={`bg-white border rounded-xl p-4 flex items-center gap-4 transition-colors ${
+                dragOverIdx === i ? 'border-jade-400 bg-jade-50/50' : 'border-slate-200'
+              }`}
+            >
+              <div className="flex-shrink-0 text-slate-300 cursor-grab active:cursor-grabbing"><GripVertical className="w-4 h-4" /></div>
               <img src={slide.image_url} alt={slide.caption || ''} className="w-20 h-14 object-cover rounded-lg border border-slate-200 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-400 font-mono">Slide {i + 1}</p>
