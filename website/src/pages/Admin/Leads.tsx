@@ -78,18 +78,32 @@ export default function AdminLeads() {
                       {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="px-5 py-4">
-                      <button
-                        onClick={() => updateStatus.mutate({ id: lead.id, status: lead.status === 'new' ? 'contacted' : 'new' })}
-                        disabled={updateStatus.isPending}
-                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider transition-colors disabled:opacity-50 ${
-                          lead.status === 'new'
-                            ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
-                            : 'bg-green-50 text-green-700 hover:bg-green-100'
-                        }`}
-                      >
-                        {lead.status === 'new' ? <Clock className="w-3 h-3" /> : <CheckCircle2 className="w-3 h-3" />}
-                        {lead.status}
-                      </button>
+                      <div className="flex items-center gap-1.5 bg-slate-100 rounded-lg p-0.5 w-fit">
+                        <button
+                          onClick={() => lead.status !== 'new' && updateStatus.mutate({ id: lead.id, status: 'new' })}
+                          disabled={updateStatus.isPending}
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                            lead.status === 'new'
+                              ? 'bg-amber-50 text-amber-700 shadow-sm'
+                              : 'text-slate-400 hover:text-slate-600'
+                          }`}
+                        >
+                          <Clock className="w-3 h-3" />
+                          New
+                        </button>
+                        <button
+                          onClick={() => lead.status !== 'contacted' && updateStatus.mutate({ id: lead.id, status: 'contacted' })}
+                          disabled={updateStatus.isPending}
+                          className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-semibold uppercase tracking-wider transition-all ${
+                            lead.status === 'contacted'
+                              ? 'bg-green-50 text-green-700 shadow-sm'
+                              : 'text-slate-400 hover:text-slate-600'
+                          }`}
+                        >
+                          <CheckCircle2 className="w-3 h-3" />
+                          Contacted
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
