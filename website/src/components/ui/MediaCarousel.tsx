@@ -52,12 +52,12 @@ export default function MediaCarousel({
   const goPrev = useCallback(() => goTo((index - 1 + items.length) % items.length), [index, items.length, goTo])
 
   useEffect(() => {
-    if (!autoPlay || paused || items.length <= 1) return
+    if (!autoPlay || paused || playingId !== null || items.length <= 1) return
     timerRef.current = setInterval(goNext, interval)
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [autoPlay, paused, items.length, interval, goNext])
+  }, [autoPlay, paused, playingId, items.length, interval, goNext])
 
   useEffect(() => {
     setIndex(0)
