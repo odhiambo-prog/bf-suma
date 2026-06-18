@@ -13,7 +13,6 @@ import { useEvents } from '@/hooks/useEvents'
 import { useReviews } from '@/hooks/useReviews'
 import { useFAQ } from '@/hooks/useFAQ'
 import { useLeadForm } from '@/hooks/useLeadForm'
-import { SHOP_CONFIG } from '@/config/shop.config'
 
 const containerVariants = {
   visible: {
