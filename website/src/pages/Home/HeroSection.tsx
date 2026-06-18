@@ -2,28 +2,18 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { SHOP_CONFIG } from '@/config/shop.config'
-
-const heroImages = [
-  '/images/herosection/3.jpeg',
-  '/images/herosection/5.jpeg',
-  '/images/herosection/7.jpeg',
-  '/images/herosection/1.jpeg',
-  '/images/herosection/9.jpeg',
-]
+import { useHeroCarousel } from '@/hooks/useHeroCarousel'
 
 export default function HeroSection() {
+  const { data: slides = [], isLoading } = useHeroCarousel()
+  const safeSlides = Array.isArray(slides) ? slides : []
+  const heroImages = safeSlides.map(s => s.image_url)
+
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined)
 
   const total = heroImages.length
-
-  useEffect(() => {
-    heroImages.forEach(src => {
-      const img = new Image()
-      img.src = src
-    })
-  }, [])
 
   useEffect(() => {
     if (paused) return
@@ -34,6 +24,39 @@ export default function HeroSection() {
   }, [paused, total])
 
   const goTo = (i: number) => setIndex(i)
+
+  if (isLoading || total === 0) {
+    return (
+      <section className="relative min-h-[100dvh] flex items-center overflow-hidden bg-slate-900">
+        <div className="absolute inset-0 bg-slate-900 animate-pulse" />
+        <div className="relative z-20 max-w-7xl mx-auto px-6 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="max-w-xl"
+          >
+            <p className="text-xs font-semibold tracking-[0.2em] uppercase text-jade-300 mb-6">
+              {SHOP_CONFIG.tagline}
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.15] mb-5 text-balance">
+              BF SUMA Nairobi{' '}
+              <span className="text-jade-400">Eagle Shop</span>
+            </h1>
+            <p className="text-sm text-slate-300 leading-relaxed mb-10 max-w-md">
+              Beyond supplements, we are a wellness hub. Located at the heart of Nairobi, our Eagle Shop provides professional health services to support your journey.
+            </p>
+            <Link
+              to="/about"
+              className="inline-flex items-center justify-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all"
+            >
+              Learn More
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section

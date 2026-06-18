@@ -58,13 +58,19 @@ export default function AdminCompanyEvents() {
     load()
   }
 
+  const [uploadError, setUploadError] = useState('')
+
   async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>, eventId: string) {
     const file = e.target.files?.[0]
     if (!file) return
+    setUploadError('')
     const ext = file.name.split('.').pop()
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const { error } = await supabase.storage.from('company-events').upload(filename, file, { contentType: file.type })
-    if (!error) {
+    if (error) {
+      console.error('Supabase upload error:', error)
+      setUploadError(error.message || 'Upload failed. Make sure the storage bucket exists.')
+    } else {
       const { data: { publicUrl } } = supabase.storage.from('company-events').getPublicUrl(filename)
       await supabase.from('company_event_media').insert({ company_event_id: eventId, media_type: file.type.startsWith('video') ? 'video' : 'image', url: publicUrl })
       load()
@@ -161,6 +167,9 @@ export default function AdminCompanyEvents() {
               </div>
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <div className="flex items-center gap-2 mb-3">
+                  {uploadError && (
+                    <div className="flex-1 text-[11px] text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">{uploadError}</div>
+                  )}
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Media ({event.company_event_media?.length || 0})</span>
                   <input
                     type="file" accept="image/*,video/*"

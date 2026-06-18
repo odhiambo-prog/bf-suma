@@ -12,6 +12,7 @@ export default function AdminHeroCarousel() {
   const [showForm, setShowForm] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState('')
+  const [uploadError, setUploadError] = useState('')
   const [form, setForm] = useState({ image_urls: [] as string[], caption: '', link_url: '', is_active: true })
 
   useEffect(() => { load() }, [])
@@ -54,6 +55,7 @@ export default function AdminHeroCarousel() {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
     setUploading(true)
+    setUploadError('')
 
     const uploaded: string[] = []
     for (let i = 0; i < files.length; i++) {
@@ -62,13 +64,18 @@ export default function AdminHeroCarousel() {
       const ext = file.name.split('.').pop()
       const filename = `hero-${Date.now()}-${i}.${ext}`
       const { error } = await supabase.storage.from('hero-carousel').upload(filename, file, { contentType: file.type })
-      if (!error) {
+      if (error) {
+        console.error('Supabase upload error:', error)
+        setUploadError(error.message || 'Upload failed. Make sure the storage bucket exists.')
+      } else {
         const { data: { publicUrl } } = supabase.storage.from('hero-carousel').getPublicUrl(filename)
         uploaded.push(publicUrl)
       }
     }
 
-    setForm({ ...form, image_urls: [...form.image_urls, ...uploaded] })
+    if (uploaded.length > 0) {
+      setForm({ ...form, image_urls: [...form.image_urls, ...uploaded] })
+    }
     setUploading(false)
     setUploadProgress('')
   }
@@ -109,6 +116,9 @@ export default function AdminHeroCarousel() {
                       </div>
                     ))}
                   </div>
+                )}
+                {uploadError && (
+                  <p className="text-[11px] text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2 mb-3">{uploadError}</p>
                 )}
                 <label className="flex items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-jade-400 transition-colors">
                   <Upload className="w-5 h-5 text-slate-400" />
