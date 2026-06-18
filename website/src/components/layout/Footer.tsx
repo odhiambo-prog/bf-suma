@@ -127,9 +127,15 @@ export default function Footer() {
               Admin
             </Link>
             <span className="text-xs text-slate-700">|</span>
-            <p className="text-xs text-slate-600 font-mono tracking-tight">
-              BFSUMA
-            </p>
+            <a
+              href="https://www.dweche.africa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-jade-500 transition-colors"
+            >
+              <img src="/dweche_logo.png" alt="Dweche Africa" className="h-3.5 w-auto brightness-0 invert opacity-60 hover:opacity-100 transition-opacity" />
+              Powered by Dweche Africa
+            </a>
           </div>
         </div>
       </div>
