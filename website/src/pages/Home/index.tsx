@@ -12,7 +12,7 @@ import EventDetail from '@/pages/Events/EventDetail'
 import { useEvents } from '@/hooks/useEvents'
 import { useReviews } from '@/hooks/useReviews'
 import { useFAQ } from '@/hooks/useFAQ'
-import { trackWhatsAppClick } from '@/hooks/useAnalytics'
+import { useLeadForm } from '@/hooks/useLeadForm'
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 const containerVariants = {
@@ -83,6 +83,7 @@ function EventsPreview() {
 
 function ReviewsPreview() {
   const { data: reviews = [], isLoading } = useReviews()
+  const { openLeadForm } = useLeadForm()
   const safeReviews = Array.isArray(reviews) ? reviews : []
   const preview = safeReviews.slice(0, 8)
   const x = useMotionValue(0)
@@ -190,15 +191,12 @@ function ReviewsPreview() {
         </div>
 
         <div className="text-center mt-8">
-          <a
-            href={`https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace('+', '')}?text=Hi, I'd like to book a wellness consultation.`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => trackWhatsAppClick('cta-book-consultation-home')}
-            className="inline-flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all"
-          >
-            Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+            <button
+              onClick={() => openLeadForm('Wellness consultation')}
+              className="inline-flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all"
+            >
+              Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
+            </button>
         </div>
       </div>
     </section>

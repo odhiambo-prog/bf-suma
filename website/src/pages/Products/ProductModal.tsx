@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingBag, Phone, ShieldCheck } from 'lucide-react'
 import type { ProductWithStock } from '@/services/inventory.service'
-import { SHOP_CONFIG } from '@/config/shop.config'
 import StockBadge from '@/components/ui/StockBadge'
+import { useLeadForm } from '@/hooks/useLeadForm'
 
 interface ProductModalProps {
   product: ProductWithStock | null
@@ -15,11 +15,9 @@ const placeholderStock = [
 ]
 
 export default function ProductModal({ product, onClose }: ProductModalProps) {
+  const { openLeadForm } = useLeadForm()
   if (!product) return null
 
-  const whatsappMessage = `Hi, I'm interested in ${product.name}`
-  const whatsappUrl = `https://wa.me/${SHOP_CONFIG.contact.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`
-  
   const displayStock = product.stock && product.stock.length > 0 
     ? product.stock.map(s => ({ 
         branchName: s.branchName, 
@@ -96,15 +94,13 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 </div>
               </div>
 
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => openLeadForm(product.name)}
                 className="flex items-center justify-center gap-2 w-full border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
               >
                 <Phone className="w-3.5 h-3.5" />
                 Inquire via WhatsApp
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>

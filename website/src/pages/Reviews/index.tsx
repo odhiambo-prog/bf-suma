@@ -6,12 +6,13 @@ import SEOHead from '@/components/seo/SEOHead'
 import ReviewCard from './ReviewCard'
 import ReviewSubmitForm from './ReviewSubmitForm'
 import { useReviews } from '@/hooks/useReviews'
-import { trackWhatsAppClick, trackFormSubmit } from '@/hooks/useAnalytics'
-import { SHOP_CONFIG } from '@/config/shop.config'
+import { trackFormSubmit } from '@/hooks/useAnalytics'
+import { useLeadForm } from '@/hooks/useLeadForm'
 
 export default function Reviews() {
   const [showForm, setShowForm] = useState(false)
   const { data: reviews = [], isLoading } = useReviews()
+  const { openLeadForm } = useLeadForm()
 
   return (
     <div className="pt-28 min-h-screen bg-surface">
@@ -76,15 +77,12 @@ export default function Reviews() {
             <p className="text-sm text-jade-100 max-w-lg mx-auto mb-8 leading-relaxed">
               Our wellness experts are here to guide you on your journey to optimal well-being. Book a personalized consultation today and take the first step toward a healthier you.
             </p>
-            <a
-              href={`https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace('+', '')}?text=Hi, I'd like to book a wellness consultation.`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackWhatsAppClick('cta-book-consultation')}
+            <button
+              onClick={() => openLeadForm('Wellness consultation')}
               className="inline-flex items-center gap-2 bg-white text-jade-700 hover:bg-jade-50 px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-lg"
             >
               Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
-            </a>
+            </button>
           </div>
         </motion.div>
       </div>

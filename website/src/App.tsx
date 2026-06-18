@@ -26,6 +26,7 @@ import AdminBranches from '@/pages/Admin/Branches'
 import AdminCompanyEvents from '@/pages/Admin/CompanyEvents'
 import AdminHeroCarousel from '@/pages/Admin/HeroCarousel'
 import AdminTeam from '@/pages/Admin/Team'
+import AdminLeads from '@/pages/Admin/Leads'
 
 export default function App() {
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function App() {
                 <Route path="company-events" element={<AdminCompanyEvents />} />
                 <Route path="hero" element={<AdminHeroCarousel />} />
                 <Route path="team" element={<AdminTeam />} />
+                <Route path="leads" element={<AdminLeads />} />
               </Route>
             </Route>
           </Routes>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Calendar, HelpCircle, Star, MapPin, Users, Image, UserCircle, ArrowRight } from 'lucide-react'
+import { Calendar, HelpCircle, Star, MapPin, Users, Image, UserCircle, MessageSquare, ArrowRight } from 'lucide-react'
 
 const cards = [
   { name: 'Events', href: '/admin/events', icon: Calendar, count: 'Manage events with media uploads' },
@@ -9,6 +9,7 @@ const cards = [
   { name: 'Company Events', href: '/admin/company-events', icon: Users, count: 'Distributor program events' },
   { name: 'Hero Carousel', href: '/admin/hero', icon: Image, count: 'Homepage carousel slides' },
   { name: 'Team', href: '/admin/team', icon: UserCircle, count: 'Manage team member profiles' },
+  { name: 'Leads', href: '/admin/leads', icon: MessageSquare, count: 'View visitor inquiries' },
 ]
 
 export default function AdminDashboard() {
