@@ -1,18 +1,27 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Send, Check, Loader2 } from 'lucide-react'
+import { X, Send, MessageCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { SHOP_CONFIG } from '@/config/shop.config'
 import { trackFormSubmit } from '@/hooks/useAnalytics'
-
-interface ChatMessage {
-  role: 'bot' | 'user'
-  text: string
-}
+import { useProducts } from '@/hooks/useProducts'
+import { useBranches } from '@/hooks/useBranches'
+import { useEvents } from '@/hooks/useEvents'
+import { useFAQ } from '@/hooks/useFAQ'
+import { useCompanyEvents } from '@/hooks/useCompanyEvents'
+import { useAIResponse, type ChatMessage } from '@/hooks/useAIResponse'
 
 interface ChatLeadFormProps {
   onClose: () => void
 }
+
+const SUGGESTED_QUESTIONS = [
+  '📦 What products are in stock?',
+  '📅 Any upcoming events?',
+  '🤝 How do I become a distributor?',
+  '📍 Where is your Naivasha branch?',
+]
 
 const botMessageVariants = {
   hidden: { opacity: 0, x: -20, scale: 0.95 },
@@ -24,33 +33,116 @@ const userMessageVariants = {
   visible: { opacity: 1, x: 0, scale: 1 },
 }
 
+function ChatBubble({ msg, isStreaming }: { msg: ChatMessage | { role: string; text: string }; isStreaming?: boolean }) {
+  const isUser = msg.role === 'user'
+  return (
+    <motion.div
+      layout
+      variants={isUser ? userMessageVariants : botMessageVariants}
+      initial="hidden"
+      animate="visible"
+      transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+    >
+      <div
+        className={`max-w-[80%] px-3.5 py-2.5 text-sm leading-relaxed rounded-lg shadow-sm ${
+          isUser
+            ? 'bg-[#DCF8C6] text-slate-800 rounded-br-sm'
+            : 'bg-white text-slate-700 rounded-bl-sm'
+        }`}
+      >
+        <span>{msg.text}</span>
+        {isStreaming && <span className="inline-block w-1.5 h-4 bg-slate-400 ml-0.5 animate-pulse" />}
+      </div>
+    </motion.div>
+  )
+}
+
+function TypingIndicator() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex justify-start"
+    >
+      <div className="bg-white rounded-lg rounded-bl-sm px-4 py-3 shadow-sm flex items-center gap-1">
+        {[0, 1, 2].map(i => (
+          <motion.span
+            key={i}
+            custom={i}
+            animate={{ y: [0, -4, 0] }}
+            transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+            className="w-2 h-2 bg-slate-400 rounded-full"
+          />
+        ))}
+      </div>
+    </motion.div>
+  )
+}
+
 export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
   const [step, setStep] = useState(0)
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'bot', text: "👋 Hi there! Welcome to BF SUMA Eagle Shop. What's your name?" },
+    { role: 'assistant' as const, text: "👋 Hi there! Welcome to BF SUMA Eagle Shop. What's your name?" },
   ])
   const [input, setInput] = useState('')
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
+  const [location, setLocation] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [done, setDone] = useState(false)
+  const [leadId, setLeadId] = useState<string | null>(null)
+  const [phase, setPhase] = useState<'lead' | 'ai'>('lead')
+  const [showSuggestions, setShowSuggestions] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isTyping])
+  const { data: products } = useProducts()
+  const { data: branches } = useBranches()
+  const { data: events } = useEvents()
+  const { data: faqs } = useFAQ()
+  const { data: companyEvents } = useCompanyEvents()
+
+  const {
+    messages: aiMessages,
+    streamingText,
+    isStreaming: isAiStreaming,
+    error: aiError,
+    sendMessage,
+    clearMessages,
+  } = useAIResponse(
+    leadId ? { id: leadId, name, phone, location } : null,
+  )
 
   useEffect(() => {
-    if (!done) inputRef.current?.focus()
-  }, [step, done])
+    const stored = localStorage.getItem('bfsuma-chat-session')
+    if (!stored) return
+    try {
+      const session = JSON.parse(stored)
+      if (session.leadId && session.name) {
+        setName(session.name)
+        setPhone(session.phone)
+        setLocation(session.location)
+        setLeadId(session.leadId)
+        setPhase('ai')
+        setShowSuggestions(false)
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, aiMessages, streamingText, isTyping, isAiStreaming])
+
+  useEffect(() => {
+    if (phase === 'lead') inputRef.current?.focus()
+  }, [step, phase])
 
   function addBotMessage(text: string) {
     setIsTyping(true)
     setTimeout(() => {
       setIsTyping(false)
-      setMessages(prev => [...prev, { role: 'bot', text }])
+      setMessages(prev => [...prev, { role: 'assistant', text }])
     }, 800)
   }
 
@@ -61,7 +153,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
     const val = input.trim()
-    if (!val || isTyping || submitting || done) return
+    if (!val || isTyping || submitting) return
 
     addUserMessage(val)
     setInput('')
@@ -75,43 +167,66 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
       setTimeout(() => addBotMessage(`📍 Got it! And where are you based?`), 100)
       setStep(2)
     } else if (step === 2) {
+      setLocation(val)
       setSubmitting(true)
       setIsTyping(true)
 
       try {
-        const { error } = await supabase.from('leads').insert({
-          name,
-          phone,
-          location: val,
-          message: 'Chat widget inquiry',
-        })
+        const { data, error } = await supabase
+          .from('leads')
+          .insert({ name, phone, location: val, message: 'Chat widget inquiry' })
+          .select('id')
+          .single()
+
         if (error) throw error
         trackFormSubmit('chat-lead')
 
-        const waMessage = `Hi! I'm ${name} from ${val}. Call me at ${phone}.`
-        const waUrl = `https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waMessage)}`
+        const savedLeadId = data?.id || 'local'
+        setLeadId(savedLeadId)
+        setIsTyping(false)
+        setSubmitting(false)
+        setPhase('ai')
+        setShowSuggestions(true)
 
+        localStorage.setItem('bfsuma-chat-session', JSON.stringify({
+          leadId: savedLeadId,
+          name,
+          phone,
+          location: val,
+        }))
+      } catch {
         setIsTyping(false)
         setMessages(prev => [...prev, {
-          role: 'bot',
-          text: `🚀 Thanks ${name}! Let's connect you on WhatsApp now.`,
-        }])
-        setDone(true)
-
-        setTimeout(() => {
-          window.open(waUrl, '_blank', 'noopener')
-          onClose()
-        }, 1500)
-      } catch (err) {
-        setIsTyping(false)
-        setMessages(prev => [...prev, {
-          role: 'bot',
+          role: 'assistant',
           text: "😕 Sorry, something went wrong. Could you try again?",
         }])
         setSubmitting(false)
         setStep(2)
       }
     }
+  }
+
+  function handleAiSend(text: string) {
+    sendMessage(text, {
+      products,
+      branches,
+      events,
+      faqs,
+      companyEvents,
+    })
+    setShowSuggestions(false)
+  }
+
+  function handleSuggestionClick(question: string) {
+    const cleanText = question.replace(/^[^\s]+\s/, '')
+    handleAiSend(cleanText)
+  }
+
+  function handleTalkToHuman() {
+    const waMessage = `Hi! I'm ${name} from ${location}. Call me at ${phone}.`
+    const waUrl = `https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waMessage)}`
+    window.open(waUrl, '_blank', 'noopener')
+    onClose()
   }
 
   return (
@@ -131,7 +246,9 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">BF SUMA Eagle Shop</p>
-            <p className="text-[10px] text-white/70">Typically replies instantly</p>
+            <p className="text-[10px] text-white/70">
+              {phase === 'ai' ? 'AI Assistant' : 'Typically replies instantly'}
+            </p>
           </div>
         </div>
         <button onClick={onClose} className="p-1 text-white/80 hover:text-white transition-colors">
@@ -141,103 +258,133 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
 
       <div className="h-[380px] overflow-y-auto p-4 bg-[#ECE5DD] space-y-2">
         <AnimatePresence mode="popLayout">
-          {messages.map((msg, i) => (
-            <motion.div
-              key={`${msg.role}-${i}`}
-              layout
-              variants={msg.role === 'bot' ? botMessageVariants : userMessageVariants}
-              initial="hidden"
-              animate="visible"
-              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[80%] px-3.5 py-2.5 text-sm leading-relaxed rounded-lg shadow-sm ${
-                  msg.role === 'user'
-                    ? 'bg-[#DCF8C6] text-slate-800 rounded-br-sm'
-                    : 'bg-white text-slate-700 rounded-bl-sm'
-                }`}
-              >
-                {msg.text.includes('👋') || msg.text.includes('🤝') || msg.text.includes('📍') || msg.text.includes('🚀') || msg.text.includes('😕') ? (
-                  <span>{msg.text}</span>
-                ) : (
-                  <span>{msg.text}</span>
-                )}
-              </div>
-            </motion.div>
+          {phase === 'lead' && messages.map((msg, i) => (
+            <ChatBubble key={`lead-${i}`} msg={msg} />
           ))}
+
+          {phase === 'ai' && (
+            <>
+              {aiMessages.length === 0 && !isAiStreaming && (
+                <ChatBubble
+                  msg={{
+                    role: 'assistant',
+                    text: `🚀 Thanks ${name}! Now, how can I help you today? Ask me about products, events, branches, or anything about BF SUMA.`,
+                  }}
+                />
+              )}
+
+              {aiMessages.map((msg, i) => (
+                <ChatBubble key={`ai-${i}`} msg={msg} />
+              ))}
+
+              {isAiStreaming && (
+                <ChatBubble
+                  msg={{ role: 'assistant', text: streamingText || '...' }}
+                  isStreaming
+                />
+              )}
+
+              {showSuggestions && aiMessages.length === 0 && !isAiStreaming && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-wrap gap-1.5 pt-2"
+                >
+                  {SUGGESTED_QUESTIONS.map((q) => (
+                    <motion.button
+                      key={q}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSuggestionClick(q)}
+                      className="text-xs bg-white hover:bg-[#DCF8C6] border border-slate-200 rounded-full px-3 py-1.5 shadow-sm transition-colors text-slate-700"
+                    >
+                      {q}
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+
+              {aiError && (
+                <div className="text-red-500 text-xs text-center pt-1">{aiError}</div>
+              )}
+            </>
+          )}
         </AnimatePresence>
 
-        {isTyping && (
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex justify-start"
-          >
-            <div className="bg-white rounded-lg rounded-bl-sm px-4 py-3 shadow-sm flex items-center gap-1">
-              {[0, 1, 2].map(i => (
-                <motion.span
-                  key={i}
-                  custom={i}
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
-                  className="w-2 h-2 bg-slate-400 rounded-full"
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {done && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex justify-center pt-2"
-          >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            >
-              <Loader2 className="w-5 h-5 text-[#075E54]" />
-            </motion.div>
-          </motion.div>
-        )}
+        {phase === 'lead' && isTyping && <TypingIndicator />}
 
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="bg-white border-t border-slate-200 px-3 py-2 flex items-center gap-2">
-        <input
-          ref={inputRef}
-          type={step === 1 ? 'tel' : 'text'}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder={
-            done ? 'Connected!' :
-            isTyping ? 'Please wait...' :
-            step === 0 ? 'Type your name...' :
-            step === 1 ? 'Type your phone number...' :
-            'Type your location...'
-          }
-          disabled={isTyping || submitting || done}
-          className="flex-1 px-3 py-2 text-sm bg-slate-50 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-[#075E54] transition-all disabled:opacity-50"
-          autoComplete="off"
-        />
-        <motion.button
-          type="submit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.9 }}
-          disabled={!input.trim() || isTyping || submitting || done}
-          className="w-9 h-9 bg-[#075E54] hover:bg-[#054d44] rounded-full flex items-center justify-center transition-colors disabled:opacity-40 shrink-0"
-        >
-          {submitting ? (
-            <Loader2 className="w-4 h-4 text-white animate-spin" />
-          ) : done ? (
-            <Check className="w-4 h-4 text-white" />
-          ) : (
+      <form
+        onSubmit={phase === 'ai' ? (e) => { e.preventDefault(); handleAiSend(input) } : handleSend}
+        className="bg-white border-t border-slate-200 px-3 py-2"
+      >
+        {phase === 'ai' && leadId && (
+          <div className="flex gap-1.5 mb-2">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleTalkToHuman}
+              className="flex-1 text-[11px] bg-[#25D366] hover:bg-[#22c35e] text-white font-medium rounded-lg px-3 py-1.5 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <MessageCircle className="w-3 h-3" />
+              Talk to human
+            </motion.button>
+            {aiMessages.length > 0 && (
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={clearMessages}
+                className="text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg px-3 py-1.5 transition-colors"
+              >
+                Clear
+              </motion.button>
+            )}
+          </div>
+        )}
+
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type={phase === 'lead' && step === 1 ? 'tel' : 'text'}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder={
+              phase === 'ai'
+                ? isAiStreaming
+                  ? 'AI is typing...'
+                  : 'Ask me anything...'
+                : isTyping || submitting
+                  ? 'Please wait...'
+                  : step === 0
+                    ? 'Type your name...'
+                    : step === 1
+                      ? 'Type your phone number...'
+                      : 'Type your location...'
+            }
+            disabled={
+              phase === 'lead' ? (isTyping || submitting) : isAiStreaming
+            }
+            className="flex-1 px-3 py-2 text-sm bg-slate-50 rounded-lg outline-none focus:bg-white focus:ring-1 focus:ring-[#075E54] transition-all disabled:opacity-50"
+            autoComplete="off"
+          />
+          <motion.button
+            type="submit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            disabled={
+              !input.trim() ||
+              (phase === 'lead' && (isTyping || submitting)) ||
+              (phase === 'ai' && isAiStreaming)
+            }
+            className="w-9 h-9 bg-[#075E54] hover:bg-[#054d44] rounded-full flex items-center justify-center transition-colors disabled:opacity-40 shrink-0"
+          >
             <Send className="w-4 h-4 text-white" />
-          )}
-        </motion.button>
+          </motion.button>
+        </div>
       </form>
     </motion.div>
   )
