@@ -79,14 +79,15 @@ function buildSystemPrompt(context: any): string {
     const stockStr = (p.stock || []).map((s: any) =>
       `${s.branchName}: ${s.quantity} in stock${s.inStock ? '' : ' (out of stock)'}`
     ).join('; ')
-    return `- ${p.code}: ${p.name} (${p.category})${stockStr ? ` — ${stockStr}` : ''}`
+    const descStr = p.description ? ` — ${p.description}` : ''
+    return `- ${p.code}: ${p.name} (${p.category})${descStr}${stockStr ? ` [Stock: ${stockStr}]` : ''}`
   })
   sections.push(productList.length ? productList.join('\n') : '- No products listed.')
   sections.push(``)
   sections.push(`EVENTS:`)
 
   const eventList = (events || []).map((e: any) =>
-    `- ${e.title}: ${e.event_date}${e.location_name ? ` at ${e.location_name}` : ''}${e.status ? ` [${e.status}]` : ''}${e.description ? ` — ${e.description.substring(0, 100)}` : ''}`
+    `- ${e.title}: ${e.event_date}${e.event_end_date ? ` to ${e.event_end_date}` : ''}${e.location_name ? ` at ${e.location_name}` : ''}${e.location_address ? ` (${e.location_address})` : ''}${e.status ? ` [${e.status}]` : ''}${e.description ? ` — ${e.description}` : ''}`
   )
   sections.push(eventList.length ? eventList.join('\n') : '- No events listed.')
   sections.push(``)

@@ -215,6 +215,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
       companyEvents,
     })
     setShowSuggestions(false)
+    setInput('')
   }
 
   function handleSuggestionClick(question: string) {
