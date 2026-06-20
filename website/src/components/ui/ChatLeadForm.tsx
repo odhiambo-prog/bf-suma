@@ -236,7 +236,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 40, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-      className="fixed bottom-24 right-6 z-50 w-[360px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+      className="fixed bottom-20 sm:bottom-24 right-3 sm:right-6 left-3 sm:left-auto z-50 w-auto sm:w-[360px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
     >
       <div className="bg-[#075E54] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -257,7 +257,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
         </button>
       </div>
 
-      <div className="h-[380px] overflow-y-auto p-4 bg-[#ECE5DD] space-y-2">
+      <div className="h-[50vh] sm:h-[380px] overflow-y-auto p-4 bg-[#ECE5DD] space-y-2">
         <AnimatePresence mode="popLayout">
           {phase === 'lead' && messages.map((msg, i) => (
             <ChatBubble key={`lead-${i}`} msg={msg} />
