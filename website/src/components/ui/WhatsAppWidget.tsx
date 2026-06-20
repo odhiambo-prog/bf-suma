@@ -6,9 +6,9 @@ import ChatLeadForm from './ChatLeadForm'
 export default function WhatsAppWidget() {
   const [showChat, setShowChat] = useState(false)
 
-  const handleOpen = () => {
+  const handleToggle = () => {
     trackWhatsAppClick('floating-widget')
-    setShowChat(true)
+    setShowChat(prev => !prev)
   }
 
   const containerVariants = {
@@ -40,7 +40,7 @@ export default function WhatsAppWidget() {
           className="hidden sm:flex items-center gap-3"
         >
           <motion.button
-            onClick={handleOpen}
+            onClick={handleToggle}
             whileHover={{ scale: 1.05, x: -2 }}
             whileTap={{ scale: 0.95 }}
             className="bg-white border border-slate-200 shadow-md hover:shadow-lg rounded-full pl-4 pr-3.5 py-2 cursor-pointer transition-shadow hover:border-[#25D366]/30"
@@ -56,7 +56,7 @@ export default function WhatsAppWidget() {
         </motion.div>
 
         <motion.button
-          onClick={handleOpen}
+          onClick={handleToggle}
           animate={{ y: [0, -5, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
           whileHover={{

@@ -243,12 +243,21 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 40, scale: 0.9 }}
-      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-      className="fixed sm:bottom-24 bottom-0 right-0 sm:right-6 left-0 sm:left-auto z-50 w-auto sm:w-[360px] bg-white shadow-2xl border border-slate-200 sm:rounded-2xl rounded-t-2xl flex flex-col max-h-[85vh] sm:max-h-none"
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
+        className="fixed inset-0 z-40 bg-black/20 sm:bg-transparent"
+        onClick={onClose}
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.9 }}
+        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+        className="fixed sm:bottom-24 bottom-0 right-0 sm:right-6 left-0 sm:left-auto z-50 w-auto sm:w-[360px] bg-white shadow-2xl border border-slate-200 sm:rounded-2xl rounded-t-2xl flex flex-col max-h-[85vh] sm:max-h-none"
     >
       <div className="bg-[#075E54] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -400,5 +409,6 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
         </div>
       </form>
     </motion.div>
+    </>
   )
 }
