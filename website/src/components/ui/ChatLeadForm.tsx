@@ -135,8 +135,14 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
   }, [messages, aiMessages, streamingText, isTyping, isAiStreaming])
 
   useEffect(() => {
-    if (phase === 'lead') inputRef.current?.focus()
+    inputRef.current?.focus()
   }, [step, phase])
+
+  useEffect(() => {
+    if (!isAiStreaming && phase === 'ai') {
+      inputRef.current?.focus()
+    }
+  }, [isAiStreaming, phase])
 
   function addBotMessage(text: string) {
     setIsTyping(true)
@@ -157,6 +163,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
 
     addUserMessage(val)
     setInput('')
+    inputRef.current?.focus()
 
     if (step === 0) {
       setName(val)
@@ -220,6 +227,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
     })
     setShowSuggestions(false)
     setInput('')
+    inputRef.current?.focus()
   }
 
   function handleSuggestionClick(question: string) {
@@ -240,7 +248,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 40, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-      className="fixed bottom-20 sm:bottom-24 right-3 sm:right-6 left-3 sm:left-auto z-50 w-auto sm:w-[360px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+      className="fixed sm:bottom-24 bottom-0 right-0 sm:right-6 left-0 sm:left-auto z-50 w-auto sm:w-[360px] bg-white shadow-2xl border border-slate-200 sm:rounded-2xl rounded-t-2xl flex flex-col max-h-[85vh] sm:max-h-none"
     >
       <div className="bg-[#075E54] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -261,7 +269,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
         </button>
       </div>
 
-      <div className="h-[50vh] sm:h-[380px] overflow-y-auto p-4 bg-[#ECE5DD] space-y-2">
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 bg-[#ECE5DD] space-y-2 sm:h-[380px]">
         <AnimatePresence mode="popLayout">
           {phase === 'lead' && messages.map((msg, i) => (
             <ChatBubble key={`lead-${i}`} msg={msg} />
