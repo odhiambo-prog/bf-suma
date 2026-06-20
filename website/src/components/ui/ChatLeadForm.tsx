@@ -172,20 +172,19 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
       setIsTyping(true)
 
       try {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('leads')
           .insert({ name, phone, location: val, message: 'Chat widget inquiry' })
-          .select('id')
-          .single()
 
         if (error) {
           console.error('[ChatLeadForm] Supabase insert error:', error)
+          console.error('[ChatLeadForm] Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
           console.error('[ChatLeadForm] Auth session:', (await supabase.auth.getSession()).data.session?.user?.email ?? 'none')
           throw error
         }
         trackFormSubmit('chat-lead')
 
-        const savedLeadId = data?.id || 'local'
+        const savedLeadId = 'local'
         setLeadId(savedLeadId)
         setIsTyping(false)
         setSubmitting(false)
