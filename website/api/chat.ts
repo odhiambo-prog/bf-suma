@@ -69,7 +69,7 @@ function buildSystemPrompt(context: any): string {
   ]
 
   const branchList = (branches || []).map((b: any) =>
-    `- ${b.name}${b.address ? `: ${b.address}` : ''}${b.phone ? ` (${b.phone})` : ''}`
+    `- ${b.name}${b.address ? `: ${b.address}` : ''}${b.phone ? ` (${b.phone})` : ''}${b.maps_link ? ` [Map: ${b.maps_link}]` : ''}`
   )
   sections.push(branchList.length ? branchList.join('\n') : '- No branches listed.')
   sections.push(``)
@@ -87,7 +87,7 @@ function buildSystemPrompt(context: any): string {
   sections.push(`EVENTS:`)
 
   const eventList = (events || []).map((e: any) =>
-    `- ${e.title}: ${e.event_date}${e.event_end_date ? ` to ${e.event_end_date}` : ''}${e.location_name ? ` at ${e.location_name}` : ''}${e.location_address ? ` (${e.location_address})` : ''}${e.status ? ` [${e.status}]` : ''}${e.description ? ` — ${e.description}` : ''}`
+    `- ${e.title}: ${e.event_date}${e.event_end_date ? ` to ${e.event_end_date}` : ''}${e.location_name ? ` at ${e.location_name}` : ''}${e.location_address ? ` (${e.location_address})` : ''}${e.status ? ` [${e.status}]` : ''}${e.description ? ` — ${e.description}` : ''}${e.maps_link ? ` [Map: ${e.maps_link}]` : ''}`
   )
   sections.push(eventList.length ? eventList.join('\n') : '- No events listed.')
   sections.push(``)
