@@ -178,7 +178,11 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
           .select('id')
           .single()
 
-        if (error) throw error
+        if (error) {
+          console.error('[ChatLeadForm] Supabase insert error:', error)
+          console.error('[ChatLeadForm] Auth session:', (await supabase.auth.getSession()).data.session?.user?.email ?? 'none')
+          throw error
+        }
         trackFormSubmit('chat-lead')
 
         const savedLeadId = data?.id || 'local'
@@ -194,7 +198,8 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
           phone,
           location: val,
         }))
-      } catch {
+      } catch (err) {
+        console.error('[ChatLeadForm] Failed to save lead:', err)
         setIsTyping(false)
         setMessages(prev => [...prev, {
           role: 'assistant',
