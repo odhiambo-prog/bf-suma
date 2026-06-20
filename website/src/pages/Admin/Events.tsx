@@ -7,7 +7,7 @@ import type { Event, EventStatus } from '@/types/event.types'
 const statuses: EventStatus[] = ['upcoming', 'ongoing', 'past']
 
 function effectiveStatus(event: Event): EventStatus {
-  return event.status || computeEventStatus(event)
+  return computeEventStatus(event)
 }
 
 function localToUTC(local: string) {
@@ -261,7 +261,6 @@ export default function AdminEvents() {
                       effectiveStatus(event) === 'ongoing' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'
                     }`}>
                       {effectiveStatus(event)}
-                      {!event.status && <span className="ml-1 font-normal opacity-60">(auto)</span>}
                     </span>
                     {!event.is_published && <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Draft</span>}
                   </div>

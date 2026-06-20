@@ -54,7 +54,7 @@ const statusPriority: Record<EventStatus, number> = { upcoming: 0, ongoing: 1, p
 function processAndSort(events: Event[], filterStatus?: EventStatus): Event[] {
   const withEffective = events.map(e => ({
     ...e,
-    status: e.status || computeEventStatus(e),
+    status: computeEventStatus(e),
   }))
 
   const filtered = filterStatus
