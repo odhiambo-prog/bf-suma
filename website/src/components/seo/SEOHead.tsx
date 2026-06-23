@@ -67,7 +67,7 @@ export default function SEOHead({
   jsonLd,
 }: SEOHeadProps) {
   const location = useLocation()
-  const fullTitle = `${title} | BF SUMA Eagle Shop`
+  const fullTitle = `${title} | BF SUMA Eagleshop`
   const og = ogImage || `${SITE_URL}${SHOP_CONFIG.seo.ogImage}`
   const url = canonical || `${SITE_URL}${location.pathname}`
 
@@ -88,7 +88,7 @@ export default function SEOHead({
       <meta property="og:description" content={description} />
       <meta property="og:image" content={og} />
       <meta property="og:url" content={url} />
-      <meta property="og:site_name" content="BF SUMA Eagle Shop" />
+      <meta property="og:site_name" content="BF SUMA Eagleshop" />
       <meta property="og:locale" content="en_KE" />
 
       <meta name="twitter:card" content="summary_large_image" />
