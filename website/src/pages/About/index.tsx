@@ -59,8 +59,9 @@ export default function About() {
           <div className="mt-12 -mx-6 sm:mx-0 mb-12 overflow-hidden sm:rounded-lg">
             <img
               src="/images/about-hero.jpg"
-              alt=""
+              alt="BF SUMA Eagle Shop team and values showcase"
               className="w-full h-auto object-cover max-h-[400px]"
+              loading="lazy"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

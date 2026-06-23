@@ -46,6 +46,7 @@ export default function JoinUs() {
           src="/images/start_business.png"
           alt="Start Your Business"
           className="w-full h-auto block"
+          loading="lazy"
         />
       </section>
 
@@ -194,8 +195,9 @@ export default function JoinUs() {
       <section>
         <img
           src="/images/calltoaction.webp"
-          alt=""
+          alt="Join BF SUMA Eagle Distributor Program"
           className="w-full h-auto block"
+          loading="lazy"
         />
       </section>
 

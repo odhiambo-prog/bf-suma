@@ -187,7 +187,7 @@ function renderThumbnail(item: EventMedia, onClick: () => void) {
       {isYoutube ? (
         <img
           src={getYouTubeThumbnail(item.url)}
-          alt=""
+          alt="YouTube video thumbnail for event"
           className="w-full h-full object-cover"
           loading="lazy"
         />
@@ -250,7 +250,7 @@ function renderThumbStrip(item: EventMedia) {
     return (
       <img
         src={getYouTubeThumbnail(item.url)}
-        alt=""
+        alt="Video thumbnail for event"
         className="w-full h-full object-cover"
         loading="lazy"
       />
@@ -266,7 +266,7 @@ function renderThumbStrip(item: EventMedia) {
   return (
     <img
       src={item.url}
-      alt=""
+      alt="Event media thumbnail"
       className="w-full h-full object-cover"
       loading="lazy"
     />

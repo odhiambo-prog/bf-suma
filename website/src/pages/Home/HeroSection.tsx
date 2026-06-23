@@ -69,7 +69,7 @@ export default function HeroSection() {
           <img
             key={src}
             src={src}
-            alt=""
+            alt="BF SUMA Eagle Shop hero banner showcasing premium health supplements"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ease-in-out"
             style={{
               opacity: i === index ? 1 : 0,

@@ -71,9 +71,29 @@ export default function SEOHead({
   const og = ogImage || `${SITE_URL}${SHOP_CONFIG.seo.ogImage}`
   const url = canonical || `${SITE_URL}${location.pathname}`
 
+  const breadcrumbItems = [
+    { name: 'Home', path: '/' },
+    ...location.pathname.split('/').filter(Boolean).map((part, _, parts) => ({
+      name: part.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      path: '/' + parts.slice(0, parts.indexOf(part) + 1).join('/'),
+    })),
+  ]
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: `${SITE_URL}${item.path}`,
+    })),
+  }
+
   const schemas = [
     organizationSchema,
     localBusinessSchema,
+    breadcrumbSchema,
     ...(jsonLd || []),
   ]
 

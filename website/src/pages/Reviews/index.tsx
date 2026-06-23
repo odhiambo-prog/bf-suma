@@ -14,11 +14,39 @@ export default function Reviews() {
   const { data: reviews = [], isLoading } = useReviews()
   const { openLeadForm } = useLeadForm()
 
+  const safeReviews = Array.isArray(reviews) ? reviews : []
+  const avgRating = safeReviews.length
+    ? (safeReviews.reduce((sum, r) => sum + r.rating, 0) / safeReviews.length)
+    : 0
+
+  const reviewSchemas = safeReviews.length > 0 ? [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: 'BF SUMA Eagle Shop',
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: avgRating.toFixed(1),
+        reviewCount: safeReviews.length,
+        bestRating: '5',
+        worstRating: '1',
+      },
+      review: safeReviews.map(r => ({
+        '@type': 'Review',
+        reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: '5' },
+        author: { '@type': 'Person', name: r.reviewer_name },
+        reviewBody: r.testimonial,
+        ...(r.product_used ? { itemReviewed: { '@type': 'Product', name: r.product_used } } : {}),
+      })),
+    },
+  ] : []
+
   return (
     <div className="pt-28 min-h-screen bg-surface">
       <SEOHead
         title="Customer Reviews & Testimonials — BF SUMA Eagle Shop Nairobi"
         description="Read real reviews from BF SUMA customers who transformed their health. Share your own experience with our premium supplements and wellness services in Nairobi."
+        jsonLd={reviewSchemas}
       />
       <div className="max-w-7xl mx-auto px-6 pb-28">
         <div className="mb-16">

@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingBag, Phone, ShieldCheck } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 import type { ProductWithStock } from '@/services/inventory.service'
 import StockBadge from '@/components/ui/StockBadge'
 import { useLeadForm } from '@/hooks/useLeadForm'
@@ -26,10 +27,30 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
       }))
     : placeholderStock
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description || '',
+    category: product.category,
+    brand: { '@type': 'Brand', name: 'BF SUMA' },
+    offers: {
+      '@type': 'Offer',
+      availability: product.stock?.some(s => s.inStock)
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'BF SUMA Eagle Shop' },
+      url: `https://eagleshop.co.ke/products#${product.code}`,
+    },
+  }
+
   return (
     <AnimatePresence>
       {product && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <Helmet>
+            <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+          </Helmet>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

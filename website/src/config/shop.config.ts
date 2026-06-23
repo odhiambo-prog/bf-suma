@@ -19,10 +19,10 @@ export const SHOP_CONFIG = {
   },
 
   social: {
-    facebook: '#',
-    instagram: '#',
-    tiktok: '#',
-    youtube: '#',
+    facebook: '',
+    instagram: '',
+    tiktok: '',
+    youtube: '',
   },
 
   api: {

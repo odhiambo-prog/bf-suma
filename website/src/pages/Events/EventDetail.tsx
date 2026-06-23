@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MapPin, Calendar, ExternalLink, Clock } from 'lucide-react'
+import { Helmet } from 'react-helmet-async'
 import { format } from 'date-fns'
 import Badge from '@/components/ui/Badge'
 import MediaCarousel from '@/components/ui/MediaCarousel'
@@ -28,10 +29,28 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
       ? [{ id: 'youtube-fallback', event_id: event.id, media_type: 'youtube' as const, url: event.youtube_url, thumbnail_url: undefined, caption: undefined, sort_order: 0 }]
       : []
 
+  const eventSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Event',
+    name: event.title,
+    description: event.description,
+    startDate: event.event_date,
+    ...(event.event_end_date ? { endDate: event.event_end_date } : {}),
+    location: {
+      '@type': 'Place',
+      name: event.location_name,
+      address: event.location_address || event.location_name,
+    },
+    organizer: { '@type': 'Organization', name: 'BF SUMA Eagle Shop' },
+  }
+
   return (
     <AnimatePresence>
       {event && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <Helmet>
+            <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+          </Helmet>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
