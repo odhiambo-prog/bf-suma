@@ -20,7 +20,7 @@ export const SHOP_CONFIG = {
 
   social: {
     facebook: '',
-    instagram: '',
+    instagram: 'https://www.instagram.com/bfsumaeagleshop',
     tiktok: '',
     youtube: '',
   },
