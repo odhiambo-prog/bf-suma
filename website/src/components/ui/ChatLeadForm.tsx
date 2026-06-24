@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Send, MessageCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { SHOP_CONFIG } from '@/config/shop.config'
-import { trackFormSubmit } from '@/hooks/useAnalytics'
+import { trackFormSubmit, trackWhatsAppClick } from '@/hooks/useAnalytics'
 import { useProducts } from '@/hooks/useProducts'
 import { useBranches } from '@/hooks/useBranches'
 import { useEvents } from '@/hooks/useEvents'
@@ -236,6 +236,7 @@ export default function ChatLeadForm({ onClose }: ChatLeadFormProps) {
   }
 
   function handleTalkToHuman() {
+    trackWhatsAppClick('chat-talk-to-human')
     const waMessage = `Hi! I'm ${name} from ${location}. Call me at ${phone}.`
     const waUrl = `https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waMessage)}`
     window.open(waUrl, '_blank', 'noopener')

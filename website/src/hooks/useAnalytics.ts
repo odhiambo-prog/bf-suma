@@ -44,3 +44,7 @@ export function trackCTAClick(label: string) {
 export function trackFormSubmit(formName: string) {
   trackEvent('Form', 'submit', formName)
 }
+
+export function trackOutboundLink(url: string, label: string) {
+  trackEvent('Outbound Link', 'click', `${label} — ${url}`)
+}

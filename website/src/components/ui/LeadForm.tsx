@@ -4,7 +4,7 @@ import { X, Send, Loader2, MessageCircle } from 'lucide-react'
 import { useLeadForm } from '@/hooks/useLeadForm'
 import { useSubmitLead } from '@/hooks/useLeads'
 import { SHOP_CONFIG } from '@/config/shop.config'
-import { trackFormSubmit } from '@/hooks/useAnalytics'
+import { trackFormSubmit, trackWhatsAppClick } from '@/hooks/useAnalytics'
 import toast from 'react-hot-toast'
 
 export default function LeadForm() {
@@ -29,6 +29,7 @@ export default function LeadForm() {
     })
 
     trackFormSubmit('lead')
+    trackWhatsAppClick('lead-form')
 
     const waMessage = `Hi! I'm ${name.trim()} from ${location.trim()}.${contextMessage ? ` I'm interested in: ${contextMessage}.` : ''} Call me at ${phone.trim()}.`
     const waUrl = `https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(waMessage)}`

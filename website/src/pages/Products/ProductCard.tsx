@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ShoppingBag, ArrowUpRight, ShieldCheck, Activity, Heart, Baby, Sparkles, Leaf, Award, UserPlus, Eye } from 'lucide-react'
 import type { ProductWithStock } from '@/services/inventory.service'
+import { trackProductView } from '@/hooks/useAnalytics'
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -38,7 +39,7 @@ export default function ProductCard({ product, onViewDetails }: ProductCardProps
       }}
       whileTap={{ scale: 0.98 }}
       className="bg-white border border-surface-border cursor-pointer group"
-      onClick={() => onViewDetails(product)}
+      onClick={() => { trackProductView(product.code, product.name); onViewDetails(product) }}
     >
       <div className="aspect-square bg-surface-subtle flex items-center justify-center relative overflow-hidden">
         {product.imageUrl ? (
