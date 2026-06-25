@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import SEOHead from '@/components/seo/SEOHead'
-import { Shield } from 'lucide-react'
+import { SHOP_CONFIG } from '@/config/shop.config'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -33,9 +33,7 @@ export default function AdminLogin() {
       <div className="relative w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 bg-jade-600 rounded-xl flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
+            <img src={SHOP_CONFIG.logo} alt="BF SUMA" className="h-12 w-auto mb-4" />
             <h1 className="text-lg font-semibold text-slate-900">Admin Login</h1>
             <p className="text-xs text-slate-500 mt-1">BF SUMA Eagle Shop</p>
           </div>
