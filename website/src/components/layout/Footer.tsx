@@ -43,7 +43,7 @@ const waLink = `https://wa.me/${SHOP_CONFIG.contact.whatsapp.replace(/[^0-9]/g, 
 
 export default function Footer() {
   return (
-    <footer className="bg-ink text-white">
+    <footer className="bg-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <div className="lg:col-span-5">

@@ -109,8 +109,8 @@ export default function HeroSection() {
             }}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/80 to-ink/55 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/85 via-slate-900/60 to-slate-900/30 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent z-10" />
       </div>
 
       {!reduce && (

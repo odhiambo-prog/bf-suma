@@ -33,7 +33,7 @@ export default function JoinUs() {
         description="Join the BF SUMA Eagle Distributor Network and turn your passion for health into a rewarding business. Earn commissions, get exclusive training, and be part of a global community."
       />
 
-      <section className="relative pt-28 md:pt-32 pb-16 md:pb-20 bg-gradient-to-br from-jade-700 via-jade-800 to-ink overflow-hidden">
+      <section className="relative pt-28 md:pt-32 pb-10 md:pb-12 bg-gradient-to-br from-jade-700 via-jade-800 to-ink overflow-hidden">
         <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-citrus-500/20 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-jade-500/20 blur-3xl pointer-events-none" />
         <div className="max-w-xl mx-auto px-6 text-center relative z-10">
@@ -48,7 +48,7 @@ export default function JoinUs() {
         </div>
       </section>
 
-      <section className="py-8 md:py-12 bg-surface">
+      <section className="pt-0 pb-8 md:pb-12 bg-surface">
         <img
           src="/images/start_business.png"
           alt="Start Your Business"
@@ -215,7 +215,7 @@ export default function JoinUs() {
         />
       </section>
 
-      <section className="relative bg-ink overflow-hidden">
+      <section className="relative bg-slate-900 overflow-hidden">
         <div className="absolute top-0 left-1/2 w-1/3 h-full bg-jade-600/5 -skew-x-12 -translate-x-1/2" />
         <div className="absolute -top-24 -right-16 w-72 h-72 rounded-full bg-citrus-500/10 blur-3xl pointer-events-none" />
         <div className="max-w-3xl mx-auto px-6 py-24 text-center relative z-10">
@@ -230,7 +230,7 @@ export default function JoinUs() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackCTAClick('register-now-bottom')}
-            className={buttonVariants({ variant: 'citrus' })}
+            className="inline-flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
           >
             Register Now <ArrowRight className="w-3.5 h-3.5" />
           </a>

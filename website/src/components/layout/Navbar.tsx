@@ -54,7 +54,7 @@ export default function Navbar() {
       'fixed top-0 left-0 w-full z-50 transition-all duration-300',
       isScrolled
         ? 'bg-surface-card/95 backdrop-blur-md border-b border-surface-border shadow-sm py-3'
-        : 'bg-ink/80 backdrop-blur-md border-b border-white/10 py-4'
+        : 'bg-slate-900/60 backdrop-blur-md border-b border-white/10 py-4'
     )}>
       <div className="max-w-6xl mx-auto flex items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-3 min-w-0">
