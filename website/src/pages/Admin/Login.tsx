@@ -6,7 +6,7 @@ import { SHOP_CONFIG } from '@/config/shop.config'
 import { Button } from '@/components/ui/Button'
 import { Field, Input } from '@/components/admin/ui/FormField'
 import { toast } from '@/components/admin/ui/Toaster'
-import { Leaf, ArrowLeft } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -36,17 +36,22 @@ export default function AdminLogin() {
       <SEOHead title="Admin Login" description="BF SUMA Eagle Shop admin panel login." noindex />
       <div className="min-h-screen bg-ink flex">
         <div className="relative hidden lg:flex w-1/2 flex-col justify-between bg-gradient-to-br from-ink via-ink-800 to-jade-900 p-12 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-15 pointer-events-none"
+            style={{
+              backgroundImage: `url(${SHOP_CONFIG.logo})`,
+              filter: 'brightness(0) invert(1)',
+              WebkitMaskImage: 'radial-gradient(115% 115% at 28% 18%, #000 0%, transparent 72%)',
+              maskImage: 'radial-gradient(115% 115% at 28% 18%, #000 0%, transparent 72%)',
+            }}
+          />
           <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-citrus-500/20 blur-3xl" />
           <div className="absolute -left-10 bottom-10 h-64 w-64 rounded-full bg-jade-500/20 blur-3xl" />
           <div className="relative flex items-center gap-3">
-            <div className="w-10 h-10 bg-jade-600 rounded-xl flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-white" />
-            </div>
             <span className="text-white font-semibold tracking-wide">BF SUMA</span>
           </div>
           <div className="relative">
-            <h2 className="text-3xl font-display text-white leading-snug">Evolve the Green Current.</h2>
-            <p className="mt-3 text-sm text-muted-200 max-w-sm">
+            <p className="text-lg text-muted-200 max-w-sm">
               Sign in to manage events, reviews, branches, and everything that powers the Eagle Shop.
             </p>
           </div>
