@@ -15,7 +15,7 @@ export default function StockBadge({ branchName, quantity, inStock }: StockBadge
 
   return (
     <div className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
-      <span className="text-sm text-slate-700 font-medium">{branchName}</span>
+      <span className="text-sm text-ink font-medium">{branchName}</span>
       <span className={cn('flex items-center gap-2 text-xs font-semibold', status.color)}>
         <span className={cn('w-1.5 h-1.5 rounded-full', status.dot)} />
         {status.label}

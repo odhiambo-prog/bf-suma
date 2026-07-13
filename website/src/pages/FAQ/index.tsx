@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import SectionHeader from '@/components/ui/SectionHeader'
+import SectionIntro from '@/components/ui/SectionIntro'
 import Accordion from '@/components/ui/Accordion'
 import TabGroup from '@/components/ui/TabGroup'
 import SEOHead from '@/components/seo/SEOHead'
@@ -44,10 +44,9 @@ export default function FAQ() {
         jsonLd={faqSchema ? [faqSchema] : []}
       />
       <div className="max-w-3xl mx-auto px-6 pb-28">
-        <SectionHeader
+        <SectionIntro
           title="Frequently Asked Questions"
           subtitle="Find answers to common questions about our products, services, and distributor program."
-          eyebrow="Got Questions?"
         />
 
         {categories.length > 1 && (
@@ -63,7 +62,7 @@ export default function FAQ() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="bg-white h-14 animate-pulse border border-surface-border" />
+              <div key={i} className="bg-surface-card h-14 animate-pulse border border-surface-border rounded-2xl" />
             ))}
           </div>
         ) : (

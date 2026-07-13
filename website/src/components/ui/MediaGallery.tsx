@@ -26,7 +26,7 @@ export default function MediaGallery({ items }: MediaGalleryProps) {
           <button
             key={i}
             onClick={() => { setIndex(i); setOpen(true) }}
-            className="aspect-square bg-slate-100 overflow-hidden group cursor-pointer border border-surface-border"
+            className="aspect-square bg-surface-subtle overflow-hidden group cursor-pointer border border-surface-border"
           >
             {item.type === 'image' ? (
               <img
@@ -35,8 +35,8 @@ export default function MediaGallery({ items }: MediaGalleryProps) {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-slate-200">
-                <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="w-full h-full flex items-center justify-center bg-muted-200">
+                <span className="text-[10px] font-semibold text-muted-500 uppercase tracking-wider">
                   {item.type}
                 </span>
               </div>

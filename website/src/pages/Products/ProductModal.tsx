@@ -3,6 +3,7 @@ import { X, ShoppingBag, Phone, ShieldCheck } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 import type { ProductWithStock } from '@/services/inventory.service'
 import StockBadge from '@/components/ui/StockBadge'
+import { Button } from '@/components/ui/Button'
 import { useLeadForm } from '@/hooks/useLeadForm'
 
 interface ProductModalProps {
@@ -71,33 +72,33 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               className="absolute top-4 right-4 z-10 w-8 h-8 bg-white border border-surface-border flex items-center justify-center hover:bg-surface-subtle transition-colors"
               aria-label="Close"
             >
-              <X className="w-4 h-4 text-slate-500" />
+              <X className="w-4 h-4 text-muted-500" />
             </button>
 
             <div className="bg-surface-subtle p-8 pb-0">
-              <div className="aspect-video bg-white border border-surface-border flex items-center justify-center relative overflow-hidden">
+              <div className="aspect-video bg-surface-subtle flex items-center justify-center relative overflow-hidden rounded-2xl">
                 {product.imageUrl ? (
                    <img 
                     src={product.imageUrl} 
                     alt={product.name} 
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain drop-shadow-lg"
                   />
-                ) : (
-                  <ShieldCheck className="w-20 h-20 text-slate-200" strokeWidth={1} />
+                 ) : (
+                  <ShieldCheck className="w-20 h-20 text-muted-200" strokeWidth={1} />
                 )}
               </div>
             </div>
 
             <div className="p-8 space-y-8">
               <div>
-                <p className="text-[10px] font-semibold tracking-widest uppercase text-cobalt-600 mb-3">
+                <p className="text-[10px] font-semibold tracking-widest uppercase text-muted-700 mb-3">
                   {product.category}
                 </p>
-                <h2 className="font-display text-2xl text-slate-900">
+                <h2 className="font-display text-2xl text-ink">
                   {product.name}
                 </h2>
                 {product.description && (
-                   <p className="mt-4 text-sm text-slate-500 leading-relaxed">
+                   <p className="mt-4 text-sm text-muted-500 leading-relaxed">
                     {product.description}
                   </p>
                 )}
@@ -106,7 +107,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
               <div className="border border-surface-border p-6">
                 <div className="flex items-center gap-3 mb-5">
                   <ShoppingBag className="w-4 h-4 text-jade-600" strokeWidth={1.5} />
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-800">Branch Availability</h3>
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-700">Branch Availability</h3>
                 </div>
                 <div className="divide-y divide-surface-border">
                   {displayStock.map((stock, i) => (
@@ -115,13 +116,15 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
                 </div>
               </div>
 
-              <button
+              <Button
                 onClick={() => openLeadForm(product.name)}
-                className="flex items-center justify-center gap-2 w-full border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
+                variant="citrus"
+                size="md"
+                className="w-full"
               >
                 <Phone className="w-3.5 h-3.5" />
                 Inquire via WhatsApp
-              </button>
+              </Button>
             </div>
           </motion.div>
         </div>

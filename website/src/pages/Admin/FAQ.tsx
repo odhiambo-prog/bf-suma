@@ -1,125 +1,173 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, HelpCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import type { FAQ } from '@/types/faq.types'
+import { Button } from '@/components/ui/Button'
+import Badge from '@/components/ui/Badge'
+import { toast } from '@/components/admin/ui/Toaster'
+import { DataTable, type Column } from '@/components/admin/ui/DataTable'
+import { SlideOver } from '@/components/admin/ui/SlideOver'
+import { ConfirmDialog } from '@/components/admin/ui/ConfirmDialog'
+import { Field, Input, Textarea, Switch } from '@/components/admin/ui/FormField'
+import { EmptyState } from '@/components/admin/ui/EmptyState'
 
-interface FAQItem {
-  id: string; question: string; answer: string; category: string; sort_order: number; is_published: boolean
-}
+const emptyForm = { question: '', answer: '', category: 'General', sort_order: 0, is_published: true }
 
 export default function AdminFAQ() {
-  const [items, setItems] = useState<FAQItem[]>([])
+  const [items, setItems] = useState<FAQ[]>([])
   const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState<FAQItem | null>(null)
-  const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ question: '', answer: '', category: 'General', sort_order: 0, is_published: true })
+  const [editing, setEditing] = useState<FAQ | null>(null)
+  const [open, setOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [form, setForm] = useState({ ...emptyForm })
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { refresh() }, [])
 
-  async function load() {
+  async function refresh() {
     setLoading(true)
     const { data } = await supabase.from('faqs').select('*').order('sort_order')
-    if (data) setItems(data)
+    if (data) setItems(data as FAQ[])
     setLoading(false)
   }
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault()
-    if (editing) {
-      await supabase.from('faqs').update(form).eq('id', editing.id)
-    } else {
-      await supabase.from('faqs').insert(form)
-    }
-    setShowForm(false); setEditing(null); setForm({ question: '', answer: '', category: 'General', sort_order: 0, is_published: true })
-    load()
+  function resetForm() {
+    setForm({ ...emptyForm })
+    setEditing(null)
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Delete this FAQ?')) return
-    await supabase.from('faqs').delete().eq('id', id)
-    load()
+  function openNew() {
+    resetForm()
+    setOpen(true)
   }
 
-  function openEdit(item: FAQItem) {
+  function openEdit(item: FAQ) {
     setForm({ question: item.question, answer: item.answer, category: item.category, sort_order: item.sort_order, is_published: item.is_published })
-    setEditing(item); setShowForm(true)
+    setEditing(item)
+    setOpen(true)
   }
+
+  async function handleSave(e?: { preventDefault: () => void }) {
+    e?.preventDefault()
+    setSaving(true)
+    try {
+      if (editing) {
+        await supabase.from('faqs').update(form).eq('id', editing.id)
+        toast.success('FAQ updated')
+      } else {
+        await supabase.from('faqs').insert(form)
+        toast.success('FAQ created')
+      }
+    } catch {
+      toast.error('Failed to save FAQ')
+    }
+    setSaving(false)
+    setOpen(false)
+    resetForm()
+    refresh()
+  }
+
+  async function confirmDelete() {
+    if (!deleteId) return
+    await supabase.from('faqs').delete().eq('id', deleteId)
+    setDeleteId(null)
+    toast.success('FAQ deleted')
+    refresh()
+  }
+
+  const columns: Column<FAQ>[] = [
+    { key: 'question', header: 'Question', render: row => <span className="font-medium text-ink">{row.question}</span> },
+    { key: 'category', header: 'Category', render: row => <span className="text-muted-600">{row.category}</span> },
+    {
+      key: 'is_published',
+      header: 'Status',
+      render: row => row.is_published
+        ? <Badge variant="jade" label="Published" />
+        : <Badge variant="amber" label="Hidden" />,
+    },
+  ]
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">FAQ</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage frequently asked questions.</p>
+          <h1 className="text-xl font-semibold text-ink font-display">FAQ</h1>
+          <p className="text-sm text-muted-600 mt-0.5">Manage frequently asked questions.</p>
         </div>
-        <button onClick={() => { setEditing(null); setForm({ question: '', answer: '', category: 'General', sort_order: 0, is_published: true }); setShowForm(true) }}
-          className="flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-colors">
+        <Button onClick={openNew} variant="primary" size="sm">
           <Plus className="w-3.5 h-3.5" /> New FAQ
-        </button>
+        </Button>
       </div>
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 overflow-y-auto">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowForm(false)} />
-          <div className="relative w-full max-w-xl bg-white rounded-xl shadow-2xl p-8">
-            <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
-            <h2 className="text-base font-semibold text-slate-900 mb-6">{editing ? 'Edit FAQ' : 'New FAQ'}</h2>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Question</label>
-                <input value={form.question} onChange={e => setForm({...form, question: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" required />
-              </div>
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Answer</label>
-                <textarea value={form.answer} onChange={e => setForm({...form, answer: e.target.value})} rows={4} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none resize-none" required />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Category</label>
-                  <input value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Sort Order</label>
-                  <input type="number" value={form.sort_order} onChange={e => setForm({...form, sort_order: parseInt(e.target.value) || 0})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-              </div>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_published} onChange={e => setForm({...form, is_published: e.target.checked})} className="rounded border-slate-300 text-jade-600 focus:ring-jade-500" />
-                <span className="text-sm text-slate-600">Published</span>
-              </label>
-              <div className="flex gap-3 pt-2">
-                <button type="submit" className="bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors">
-                  {editing ? 'Update' : 'Create'}
-                </button>
-                <button type="button" onClick={() => setShowForm(false)} className="border border-slate-300 text-slate-600 rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-slate-50 transition-colors">Cancel</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <DataTable
+        columns={columns}
+        data={items}
+        rowKey={row => row.id}
+        loading={loading}
+        empty={
+          <EmptyState
+            icon={<HelpCircle className="w-5 h-5" />}
+            title="No FAQs yet"
+            description="Add answers to common questions for your customers."
+            action={<Button onClick={openNew} variant="primary" size="sm"><Plus className="w-3.5 h-3.5" /> New FAQ</Button>}
+          />
+        }
+        actions={row => (
+          <>
+            <button onClick={() => openEdit(row)} aria-label="Edit" className="p-2 rounded-lg text-muted-400 hover:text-jade-600 hover:bg-jade-50 transition-colors">
+              <Pencil className="w-4 h-4" />
+            </button>
+            <button onClick={() => setDeleteId(row.id)} aria-label="Delete" className="p-2 rounded-lg text-muted-400 hover:text-danger-600 hover:bg-danger-50 transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        )}
+      />
 
-      {loading ? (
-        <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="bg-white h-16 animate-pulse rounded-xl border border-slate-200" />)}</div>
-      ) : items.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-slate-200"><p className="text-sm text-slate-500">No FAQs yet.</p></div>
-      ) : (
-        <div className="space-y-2">
-          {items.map(item => (
-            <div key={item.id} className="bg-white border border-slate-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">{item.category}</span>
-                  {!item.is_published && <span className="text-[10px] text-amber-600 font-semibold">Hidden</span>}
-                </div>
-                <p className="text-sm font-medium text-slate-900 truncate">{item.question}</p>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button onClick={() => openEdit(item)} className="p-2 text-slate-400 hover:text-jade-600 hover:bg-jade-50 rounded-lg transition-colors"><Pencil className="w-4 h-4" /></button>
-                <button onClick={() => handleDelete(item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <SlideOver
+        open={open}
+        onClose={() => { setOpen(false); resetForm() }}
+        title={editing ? 'Edit FAQ' : 'New FAQ'}
+        description="Question and answer content."
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => { setOpen(false); resetForm() }}>Cancel</Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : editing ? 'Update' : 'Create'}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSave} className="space-y-4">
+          <Field label="Question" htmlFor="question">
+            <Input id="question" value={form.question} onChange={e => setForm({ ...form, question: e.target.value })} required />
+          </Field>
+          <Field label="Answer" htmlFor="answer">
+            <Textarea id="answer" rows={4} value={form.answer} onChange={e => setForm({ ...form, answer: e.target.value })} required />
+          </Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Category" htmlFor="category">
+              <Input id="category" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
+            </Field>
+            <Field label="Sort Order" htmlFor="sort_order">
+              <Input id="sort_order" type="number" value={form.sort_order} onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
+            </Field>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <Switch checked={form.is_published} onChange={v => setForm({ ...form, is_published: v })} />
+            <span className="text-sm text-muted-600">Published</span>
+          </label>
+        </form>
+      </SlideOver>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={o => !o && setDeleteId(null)}
+        title="Delete FAQ?"
+        description="This permanently removes the question. This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={confirmDelete}
+      />
     </div>
   )
 }

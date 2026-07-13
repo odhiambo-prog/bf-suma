@@ -7,6 +7,7 @@ import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/Button'
 
 const schema = z.object({
   reviewer_name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -19,6 +20,10 @@ type FormData = z.infer<typeof schema>
 interface ReviewSubmitFormProps {
   onClose: () => void
 }
+
+const inputClass =
+  'w-full rounded-xl border border-surface-border bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-muted-300 focus:outline-none focus:ring-2 focus:ring-jade-500/40 focus:border-jade-400'
+const labelClass = 'block text-[11px] font-semibold uppercase tracking-wider text-muted-700 mb-2'
 
 export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
   const [rating, setRating] = useState(5)
@@ -40,6 +45,7 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
 
       if (photo) {
         const ext = photo.name.split('.').pop()
+        // eslint-disable-next-line react-hooks/purity
         const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
         const { error: uploadError } = await supabase.storage
@@ -76,51 +82,51 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-modal flex items-start sm:items-center justify-center p-4 overflow-y-auto">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-ink/70 backdrop-blur-sm"
         onClick={onClose}
       />
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
-        className="relative w-full max-w-lg bg-white shadow-2xl p-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-lg bg-surface-card shadow-float-lg rounded-2xl p-8 max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 border border-surface-border flex items-center justify-center hover:bg-surface-subtle transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 border border-surface-border flex items-center justify-center hover:bg-surface-subtle transition-colors rounded-full"
           aria-label="Close"
         >
-          <X className="w-4 h-4 text-slate-500" />
+          <X className="w-4 h-4 text-muted-500" />
         </button>
 
-        <h2 className="font-display text-xl text-slate-900 mb-1">Share Your Experience</h2>
-        <p className="text-xs text-slate-500 mb-8">Tell us about your BF SUMA journey.</p>
+        <h2 className="font-display text-xl text-ink mb-1">Share Your Experience</h2>
+        <p className="text-xs text-muted-500 mb-8">Tell us about your BF SUMA journey.</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Your Name <span className="text-red-500">*</span>
+            <label className={labelClass}>
+              Your Name <span className="text-danger-500">*</span>
             </label>
             <input
               {...register('reviewer_name')}
               className={cn(
-                'w-full px-4 py-3 border bg-white text-sm transition-colors',
-                errors.reviewer_name ? 'border-red-400' : 'border-surface-border focus:border-jade-500'
+                inputClass,
+                errors.reviewer_name && 'border-danger-400 focus:border-danger-400 focus:ring-danger-500/40'
               )}
               placeholder="e.g. Jane W."
             />
             {errors.reviewer_name && (
-              <p className="text-red-500 text-[11px] mt-1">{errors.reviewer_name.message}</p>
+              <p className="text-danger-500 text-[11px] mt-1">{errors.reviewer_name.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-2">
+            <label className={labelClass}>
               Rating
             </label>
             <div className="flex gap-1">
@@ -133,7 +139,7 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
                   aria-label={`Rate ${i} stars`}
                 >
                   <Star
-                    className={`w-6 h-6 ${i <= rating ? 'text-amber-500 fill-amber-500' : 'text-slate-200'}`}
+                    className={`w-6 h-6 ${i <= rating ? 'text-amber-500 fill-amber-500' : 'text-muted-200'}`}
                   />
                 </button>
               ))}
@@ -141,41 +147,41 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Your Review <span className="text-red-500">*</span>
+            <label className={labelClass}>
+              Your Review <span className="text-danger-500">*</span>
             </label>
             <textarea
               {...register('testimonial')}
               rows={4}
               className={cn(
-                'w-full px-4 py-3 border bg-white text-sm transition-colors resize-none',
-                errors.testimonial ? 'border-red-400' : 'border-surface-border focus:border-jade-500'
+                inputClass,
+                errors.testimonial && 'border-danger-400 focus:border-danger-400 focus:ring-danger-500/40'
               )}
               placeholder="Share your experience with our products..."
             />
             {errors.testimonial && (
-              <p className="text-red-500 text-[11px] mt-1">{errors.testimonial.message}</p>
+              <p className="text-danger-500 text-[11px] mt-1">{errors.testimonial.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Product Used <span className="text-slate-400">(optional)</span>
+            <label className={labelClass}>
+              Product Used <span className="text-muted-400">(optional)</span>
             </label>
             <input
               {...register('product_used')}
-              className="w-full px-4 py-3 border border-surface-border bg-white text-sm transition-colors focus:border-jade-500"
+              className={inputClass}
               placeholder="e.g. NMN Coffee"
             />
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Your Photo <span className="text-slate-400">(optional)</span>
+            <label className={labelClass}>
+              Your Photo <span className="text-muted-400">(optional)</span>
             </label>
-            <label className="flex items-center gap-3 px-4 py-3 border-2 border-dashed border-surface-border cursor-pointer hover:border-jade-400 transition-colors">
-              <Upload className="w-4 h-4 text-slate-400" />
-              <span className="text-xs text-slate-500">
+            <label className="flex items-center gap-3 px-4 py-3 border-2 border-dashed border-surface-border cursor-pointer hover:border-jade-400 transition-colors rounded-xl">
+              <Upload className="w-4 h-4 text-muted-400" />
+              <span className="text-xs text-muted-500">
                 {photo ? photo.name : 'Upload a photo'}
               </span>
               <input
@@ -187,13 +193,9 @@ export default function ReviewSubmitForm({ onClose }: ReviewSubmitFormProps) {
             </label>
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-jade-600 hover:bg-jade-700 text-white px-7 py-3 text-xs font-semibold tracking-widest uppercase transition-all disabled:opacity-50"
-          >
+          <Button type="submit" variant="citrus" disabled={isSubmitting} className="w-full">
             {isSubmitting ? 'Submitting...' : 'Submit Review'}
-          </button>
+          </Button>
         </form>
       </motion.div>
     </div>

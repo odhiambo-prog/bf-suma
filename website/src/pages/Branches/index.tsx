@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
-import SectionHeader from '@/components/ui/SectionHeader'
+import SectionIntro from '@/components/ui/SectionIntro'
 import SEOHead from '@/components/seo/SEOHead'
 import BranchCard from '@/components/ui/BranchCard'
 import { useBranches } from '@/hooks/useBranches'
@@ -27,9 +27,9 @@ export default function Branches() {
         title="Our Locations — BF SUMA Eagle Shop Branches in Kenya"
         description="Visit BF SUMA Eagle Shop at our Nairobi locations. Find directions, contact information, and opening hours for all our branches. Premium health supplements at Utumishi House."
       />
-      <section className="pt-28 pb-8 bg-white">
+      <section className="pt-28 pb-8 bg-surface-card">
         <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader
+          <SectionIntro
             title="Our Branches"
             subtitle="Visit us at any of our locations across the country."
           />
@@ -40,24 +40,24 @@ export default function Branches() {
         <div className="max-w-7xl mx-auto px-6">
           {branches.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-sm text-slate-500">No branches listed yet.</p>
+              <p className="text-sm text-muted-500">No branches listed yet.</p>
             </div>
           ) : (
             <>
               <div className="relative max-w-md mx-auto mb-10">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-400" />
                 <input
                   type="text"
                   placeholder="Search by name, address, or contact..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 bg-white border border-surface-border rounded text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-jade-400 transition-colors"
+                  className="w-full rounded-full border border-surface-border bg-white pl-11 pr-4 py-3 text-sm text-ink placeholder:text-muted-400 focus:outline-none focus:ring-2 focus:ring-jade-500/40"
                 />
               </div>
 
               {filtered.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-sm text-slate-500">No branches matching &quot;{search}&quot;</p>
+                  <p className="text-sm text-muted-500">No branches matching &quot;{search}&quot;</p>
                 </div>
               ) : (
                 <motion.div

@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageCircle, Calendar, ArrowRight } from 'lucide-react'
-import SectionHeader from '@/components/ui/SectionHeader'
+import SectionIntro from '@/components/ui/SectionIntro'
+import { Button } from '@/components/ui/Button'
 import SEOHead from '@/components/seo/SEOHead'
 import ReviewCard from './ReviewCard'
 import ReviewSubmitForm from './ReviewSubmitForm'
@@ -50,27 +51,25 @@ export default function Reviews() {
       />
       <div className="max-w-7xl mx-auto px-6 pb-28">
         <div className="mb-16">
-          <SectionHeader
+          <SectionIntro
             title="What Our Customers Say"
             subtitle="Real reviews from real people who have transformed their health with BF SUMA."
-            eyebrow="Testimonials"
-            align="center"
           />
           <div className="flex justify-center mt-8">
-            <button
+            <Button
+              variant="citrus"
               onClick={() => { setShowForm(true); trackFormSubmit('review-form') }}
-              className="flex items-center gap-2 border-2 border-jade-500 text-jade-600 hover:bg-jade-600 hover:text-white px-5 py-3 text-xs font-semibold tracking-widest uppercase transition-all"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               Share Your Experience
-            </button>
+            </Button>
           </div>
         </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-surface-subtle h-48 animate-pulse border border-surface-border" />
+              <div key={i} className="bg-surface-subtle h-48 animate-pulse border border-surface-border rounded-3xl" />
             ))}
           </div>
         ) : (
@@ -85,7 +84,7 @@ export default function Reviews() {
 
         {!isLoading && reviews.length === 0 && (
           <div className="text-center py-20">
-            <p className="text-sm text-slate-500">No reviews yet. Be the first to share!</p>
+            <p className="text-sm text-muted-500">No reviews yet. Be the first to share!</p>
           </div>
         )}
 
@@ -93,10 +92,10 @@ export default function Reviews() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="mt-16 bg-gradient-to-br from-jade-700 to-jade-900 rounded-2xl p-10 md:p-14 text-center relative overflow-hidden"
+          className="mt-16 bg-gradient-to-br from-jade-700 to-ink rounded-3xl p-10 md:p-14 text-center relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-cobalt-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-citrus-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-jade-500/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
           <div className="relative z-10">
             <Calendar className="w-8 h-8 text-jade-200 mx-auto mb-5" strokeWidth={1.5} />
             <h2 className="font-display text-2xl sm:text-3xl text-white mb-4">
@@ -107,7 +106,7 @@ export default function Reviews() {
             </p>
             <button
               onClick={() => openLeadForm('Wellness consultation')}
-              className="inline-flex items-center gap-2 bg-white text-jade-700 hover:bg-jade-50 px-8 py-3.5 text-xs font-semibold tracking-widest uppercase transition-all rounded-lg"
+              className="inline-flex items-center gap-2 bg-white text-jade-700 hover:bg-jade-50 px-8 py-3.5 text-xs font-semibold transition-all rounded-full"
             >
               Book a Consultation <ArrowRight className="w-3.5 h-3.5" />
             </button>

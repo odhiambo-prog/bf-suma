@@ -6,7 +6,7 @@ export default function AuthGuard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-ink flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-jade-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )

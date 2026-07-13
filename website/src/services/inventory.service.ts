@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SHOP_CONFIG } from '@/config/shop.config'
 
 export interface StockLevel {

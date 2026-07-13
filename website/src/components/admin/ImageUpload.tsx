@@ -50,7 +50,7 @@ export default function ImageUpload({ bucket, onUpload, accept = 'image/*', clas
     <div className={className}>
       {preview ? (
         <div className="relative inline-block">
-          <img src={preview} alt="Preview" className="h-24 w-24 object-cover rounded border border-slate-200" />
+          <img src={preview} alt="Preview" className="h-24 w-24 object-cover rounded border border-muted-200" />
           <button
             onClick={handleRemove}
             className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center"
@@ -59,7 +59,7 @@ export default function ImageUpload({ bucket, onUpload, accept = 'image/*', clas
           </button>
         </div>
       ) : (
-        <label className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-jade-400 transition-colors text-sm text-slate-500">
+        <label className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-muted-300 rounded-lg cursor-pointer hover:border-jade-400 transition-colors text-sm text-muted-500">
           <Upload className="w-4 h-4" />
           <span>{uploading ? 'Uploading...' : 'Upload image'}</span>
           <input type="file" accept={accept} className="hidden" onChange={handleFile} disabled={uploading} />

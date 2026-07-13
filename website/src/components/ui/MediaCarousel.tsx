@@ -60,6 +60,7 @@ export default function MediaCarousel({
   }, [autoPlay, paused, playingId, items.length, interval, goNext])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIndex(0)
     setPlayingId(null)
   }, [items.length])
@@ -78,7 +79,7 @@ export default function MediaCarousel({
   return (
     <>
       <div
-        className={`relative overflow-hidden bg-slate-100 group ${className || ''}`}
+        className={`relative overflow-hidden bg-surface-subtle group ${className || ''}`}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
@@ -128,21 +129,21 @@ export default function MediaCarousel({
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm"
                 aria-label="Previous"
               >
-                <ChevronLeft className="w-4 h-4 text-slate-700" />
+                <ChevronLeft className="w-4 h-4 text-ink" />
               </button>
               <button
                 onClick={goNext}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm"
                 aria-label="Next"
               >
-                <ChevronRight className="w-4 h-4 text-slate-700" />
+                <ChevronRight className="w-4 h-4 text-ink" />
               </button>
             </>
           )}
         </div>
 
         {items.length > 1 && (
-          <div className="flex gap-1.5 p-2 overflow-x-auto bg-slate-50 border-t border-surface-border">
+          <div className="flex gap-1.5 p-2 overflow-x-auto bg-surface-subtle border-t border-surface-border">
             {items.map((item, i) => (
               <button
                 key={item.id}
@@ -209,7 +210,7 @@ function renderThumbnail(item: EventMedia, onClick: () => void) {
       {(isVideo || isYoutube) && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
           <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-md">
-            <Play className="w-5 h-5 text-slate-800 ml-0.5" />
+            <Play className="w-5 h-5 text-ink ml-0.5" />
           </div>
         </div>
       )}
@@ -258,8 +259,8 @@ function renderThumbStrip(item: EventMedia) {
   }
   if (item.media_type === 'video') {
     return (
-      <div className="w-full h-full bg-slate-200 flex items-center justify-center">
-        <Play className="w-3 h-3 text-slate-500 ml-0.5" />
+      <div className="w-full h-full bg-muted-200 flex items-center justify-center">
+        <Play className="w-3 h-3 text-muted-500 ml-0.5" />
       </div>
     )
   }

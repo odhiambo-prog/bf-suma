@@ -42,7 +42,7 @@ export default function Carousel({ slides, autoPlay, showArrows, showDots, class
             className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-surface-border flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity disabled:opacity-30 hover:bg-white"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-4 h-4 text-slate-700" />
+            <ChevronLeft className="w-4 h-4 text-ink" />
           </button>
           <button
             onClick={() => emblaApi?.scrollNext()}
@@ -50,7 +50,7 @@ export default function Carousel({ slides, autoPlay, showArrows, showDots, class
             className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 border border-surface-border flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity disabled:opacity-30 hover:bg-white"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-4 h-4 text-slate-700" />
+            <ChevronRight className="w-4 h-4 text-ink" />
           </button>
         </>
       )}
@@ -64,7 +64,7 @@ export default function Carousel({ slides, autoPlay, showArrows, showDots, class
               className="p-3 -m-3"
               aria-label={`Go to slide ${i + 1}`}
             >
-              <div className="w-6 h-[3px] rounded-full bg-slate-300 transition-colors" />
+              <div className="w-6 h-[3px] rounded-full bg-muted-300 transition-colors" />
             </button>
           ))}
         </div>

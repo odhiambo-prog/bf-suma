@@ -2,6 +2,7 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { expo } from '@/lib/motion'
 
 interface ModalProps {
   isOpen: boolean
@@ -37,45 +38,41 @@ export default function Modal({ isOpen, onClose, children, size = 'md', title }:
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-modal flex items-start sm:items-center justify-center p-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="absolute inset-0 bg-black/40"
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-ink/60 backdrop-blur-sm"
             onClick={onClose}
           />
           <motion.div
             ref={panelRef}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            role="dialog"
+            aria-modal="true"
+            initial={{ opacity: 0, y: 16, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.98 }}
+            transition={{ duration: 0.32, ease: expo }}
             className={cn(
-              'relative w-full bg-white shadow-2xl max-h-[85vh] overflow-y-auto',
+              'relative w-full bg-surface-card rounded-2xl shadow-float-lg max-h-[88vh] overflow-hidden flex flex-col',
               sizeStyles[size]
             )}
           >
-            <div className="sticky top-0 z-10 bg-white border-b border-surface-border flex items-center justify-between px-6 py-4">
-              {title && (
-                <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-              )}
-              <button
-                onClick={onClose}
-                className={cn(
-                  'w-8 h-8 flex items-center justify-center border border-surface-border',
-                  'hover:bg-surface-subtle transition-colors',
-                  !title && 'ml-auto'
-                )}
-                aria-label="Close"
-              >
-                <X className="w-4 h-4 text-slate-500" />
-              </button>
-            </div>
-            <div className="p-6">
-              {children}
-            </div>
+            {title && (
+              <div className="sticky top-0 z-10 bg-surface-card border-b border-surface-border flex items-center justify-between px-6 py-4">
+                <h3 className="text-base font-semibold text-ink font-display">{title}</h3>
+                <button
+                  onClick={onClose}
+                  className="w-9 h-9 flex items-center justify-center rounded-full text-muted-500 hover:bg-surface-subtle hover:text-ink transition-colors"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+            <div className="overflow-y-auto p-6">{children}</div>
           </motion.div>
         </div>
       )}

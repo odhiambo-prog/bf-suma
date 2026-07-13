@@ -14,7 +14,7 @@ const heights = {
 
 export default function GoogleMapEmbed({ embedUrl, title = 'Map', height = 'sm' }: GoogleMapEmbedProps) {
   return (
-    <div className={cn('w-full bg-slate-100', heights[height])}>
+    <div className={cn('w-full bg-surface-subtle', heights[height])}>
       <iframe
         src={embedUrl}
         title={title}

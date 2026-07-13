@@ -1,8 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, Upload, X, AlertCircle } from 'lucide-react'
+import { Plus, Pencil, Trash2, Upload, X, AlertCircle, Calendar, Image as ImageIcon } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { computeEventStatus } from '@/lib/events'
+import { cn } from '@/lib/utils'
 import type { Event, EventStatus } from '@/types/event.types'
+import { Button } from '@/components/ui/Button'
+import Badge from '@/components/ui/Badge'
+import { toast } from '@/components/admin/ui/Toaster'
+import { DataTable, type Column } from '@/components/admin/ui/DataTable'
+import { SlideOver } from '@/components/admin/ui/SlideOver'
+import { ConfirmDialog } from '@/components/admin/ui/ConfirmDialog'
+import { Field, Input, Textarea, Select, Switch } from '@/components/admin/ui/FormField'
+import { EmptyState } from '@/components/admin/ui/EmptyState'
 
 const statuses: EventStatus[] = ['upcoming', 'ongoing', 'past']
 
@@ -22,78 +31,99 @@ function utcToLocal(utc: string) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+const emptyForm = {
+  title: '', description: '', event_date: '', event_end_date: '',
+  location_name: '', location_address: '', maps_link: '', status: '',
+  is_published: true,
+}
+
 export default function AdminEvents() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState<Event | null>(null)
-  const [showForm, setShowForm] = useState(false)
+  const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const [form, setForm] = useState({
-    title: '', description: '', event_date: '', event_end_date: '',
-    location_name: '', location_address: '', maps_link: '', status: '',
-    is_published: true,
-  })
+  const [form, setForm] = useState({ ...emptyForm })
   const [mediaUrl, setMediaUrl] = useState('')
   const [mediaType, setMediaType] = useState<'image' | 'video' | 'youtube'>('image')
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [uploadErrorEventId, setUploadErrorEventId] = useState('')
 
-  useEffect(() => { loadEvents() }, [])
+  useEffect(() => { refresh() }, [])
 
-  async function loadEvents() {
+  async function refresh() {
     setLoading(true)
     const { data } = await supabase.from('events').select('*, event_media(*)').order('event_date', { ascending: false })
-    if (data) setEvents(data as Event[])
+    const list = (data as Event[]) || []
+    setEvents(list)
+    setEditing(prev => (prev ? list.find(e => e.id === prev.id) ?? prev : prev))
     setLoading(false)
   }
 
   function resetForm() {
-    setForm({ title: '', description: '', event_date: '', event_end_date: '', location_name: '', location_address: '', maps_link: '', status: '', is_published: true })
+    setForm({ ...emptyForm })
     setMediaUrl('')
     setEditing(null)
   }
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault()
+  function openNew() {
+    resetForm()
+    setOpen(true)
+  }
+
+  function openEdit(event: Event) {
+    setForm({
+      title: event.title, description: event.description || '',
+      event_date: utcToLocal(event.event_date), event_end_date: utcToLocal(event.event_end_date || ''),
+      location_name: event.location_name, location_address: event.location_address,
+      maps_link: event.maps_link || '', status: event.status || '',
+      is_published: event.is_published,
+    })
+    setEditing(event)
+    setOpen(true)
+  }
+
+  async function handleSave(e?: { preventDefault: () => void }) {
+    e?.preventDefault()
     setSaving(true)
 
     const eventData = { ...form, event_date: localToUTC(form.event_date), event_end_date: localToUTC(form.event_end_date), status: form.status || null }
 
-    if (editing) {
-      await supabase.from('events').update(eventData).eq('id', editing.id)
-    } else {
-      const { data } = await supabase.from('events').insert(eventData).select().single()
-      if (data && mediaUrl) {
-        await supabase.from('event_media').insert({ event_id: data.id, media_type: mediaType, url: mediaUrl })
+    try {
+      if (editing) {
+        await supabase.from('events').update(eventData).eq('id', editing.id)
+        toast.success('Event updated')
+      } else {
+        const { data } = await supabase.from('events').insert(eventData).select().single()
+        if (data && mediaUrl) {
+          await supabase.from('event_media').insert({ event_id: data.id, media_type: mediaType, url: mediaUrl })
+        }
+        toast.success('Event created')
       }
+    } catch {
+      toast.error('Failed to save event')
     }
 
     setSaving(false)
-    setShowForm(false)
+    setOpen(false)
     resetForm()
-    loadEvents()
+    refresh()
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Delete this event?')) return
-    await supabase.from('events').delete().eq('id', id)
-    loadEvents()
-  }
-
-  async function handleAddMedia(eventId: string) {
-    if (!mediaUrl) return
-    setUploading(true)
-    await supabase.from('event_media').insert({ event_id: eventId, media_type: mediaType, url: mediaUrl })
-    setMediaUrl('')
-    setUploading(false)
-    loadEvents()
+  async function confirmDelete() {
+    if (!deleteId) return
+    await supabase.from('events').delete().eq('id', deleteId)
+    setDeleteId(null)
+    toast.success('Event deleted')
+    refresh()
   }
 
   async function handleDeleteMedia(mediaId: string) {
     await supabase.from('event_media').delete().eq('id', mediaId)
-    loadEvents()
+    refresh()
   }
 
   async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>, eventId: string) {
@@ -102,7 +132,6 @@ export default function AdminEvents() {
     setUploadError('')
     setUploadErrorEventId('')
     setUploading(true)
-    let uploaded = 0
     for (const file of Array.from(files)) {
       const ext = file.name.split('.').pop()
       const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
@@ -118,228 +147,213 @@ export default function AdminEvents() {
           media_type: file.type.startsWith('video') ? 'video' : 'image',
           url: publicUrl,
         })
-        uploaded++
       }
     }
     setUploading(false)
-    loadEvents()
+    refresh()
     e.target.value = ''
   }
 
-  function openEdit(event: Event) {
-    setForm({
-      title: event.title, description: event.description || '',
-      event_date: utcToLocal(event.event_date), event_end_date: utcToLocal(event.event_end_date || ''),
-      location_name: event.location_name, location_address: event.location_address,
-      maps_link: event.maps_link || '', status: event.status || '',
-      is_published: event.is_published,
-    })
-    setEditing(event)
-    setShowForm(true)
-  }
-
   const formatDate = (d: string) => new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+  const columns: Column<Event>[] = [
+    {
+      key: 'title',
+      header: 'Event',
+      render: row => (
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            'inline-flex h-2 w-2 rounded-full',
+            effectiveStatus(row) === 'upcoming' ? 'bg-citrus-500' : effectiveStatus(row) === 'ongoing' ? 'bg-jade-500' : 'bg-muted-400',
+          )} />
+          <span className="font-medium text-ink">{row.title}</span>
+        </div>
+      ),
+    },
+    { key: 'event_date', header: 'Date', render: row => <span className="text-muted-600">{formatDate(row.event_date)}</span> },
+    { key: 'location_name', header: 'Location', render: row => <span className="text-muted-600">{row.location_name || '—'}</span> },
+    {
+      key: 'status',
+      header: 'Status',
+      render: row => {
+        const s = effectiveStatus(row)
+        const variant = s === 'upcoming' ? 'citrus' : s === 'ongoing' ? 'jade' : 'neutral'
+        return <Badge variant={variant} label={s} />
+      },
+    },
+    {
+      key: 'is_published',
+      header: 'Visibility',
+      render: row => row.is_published
+        ? <Badge variant="jade" label="Published" />
+        : <Badge variant="amber" label="Draft" />,
+    },
+  ]
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Events</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage events, media, and schedules.</p>
+          <h1 className="text-xl font-semibold text-ink font-display">Events</h1>
+          <p className="text-sm text-muted-600 mt-0.5">Manage events, media, and schedules.</p>
         </div>
-        <button
-          onClick={() => { resetForm(); setShowForm(true) }}
-          className="flex items-center gap-2 bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-4 py-2 text-xs font-semibold tracking-wider uppercase transition-colors"
-        >
+        <Button onClick={openNew} variant="primary" size="sm">
           <Plus className="w-3.5 h-3.5" /> New Event
-        </button>
+        </Button>
       </div>
 
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-16 overflow-y-auto">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowForm(false)} />
-          <div className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl p-8">
-            <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-              <X className="w-5 h-5" />
+      <DataTable
+        columns={columns}
+        data={events}
+        rowKey={row => row.id}
+        loading={loading}
+        empty={
+          <EmptyState
+            icon={<Calendar className="w-5 h-5" />}
+            title="No events yet"
+            description="Create your first event to display on the site."
+            action={<Button onClick={openNew} variant="primary" size="sm"><Plus className="w-3.5 h-3.5" /> New Event</Button>}
+          />
+        }
+        actions={row => (
+          <>
+            <button onClick={() => openEdit(row)} aria-label="Edit" className="p-2 rounded-lg text-muted-400 hover:text-jade-600 hover:bg-jade-50 transition-colors">
+              <Pencil className="w-4 h-4" />
             </button>
-            <h2 className="text-base font-semibold text-slate-900 mb-6">{editing ? 'Edit Event' : 'New Event'}</h2>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="md:col-span-2">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Title</label>
-                  <input value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" required />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Description</label>
-                  <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={3} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none resize-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Start Date & Time</label>
-                  <input type="datetime-local" value={form.event_date} onChange={e => setForm({...form, event_date: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" required />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">End Date & Time</label>
-                  <input type="datetime-local" value={form.event_end_date} onChange={e => setForm({...form, event_end_date: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Status Override</label>
-                  <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none">
-                    <option value="">-- Auto-compute --</option>
-                    {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  {!form.status && form.event_date && (
-                    <p className="text-[10px] text-slate-400 mt-1">
-                      Will auto-compute: <span className="font-medium text-slate-500">{computeEventStatus({ event_date: form.event_date, event_end_date: form.event_end_date || null })}</span>
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Published</label>
-                  <label className="flex items-center gap-2 mt-2 cursor-pointer">
-                    <input type="checkbox" checked={form.is_published} onChange={e => setForm({...form, is_published: e.target.checked})} className="rounded border-slate-300 text-jade-600 focus:ring-jade-500" />
-                    <span className="text-sm text-slate-600">{form.is_published ? 'Visible on site' : 'Hidden'}</span>
+            <button onClick={() => setDeleteId(row.id)} aria-label="Delete" className="p-2 rounded-lg text-muted-400 hover:text-danger-600 hover:bg-danger-50 transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </>
+        )}
+      />
+
+      <SlideOver
+        open={open}
+        onClose={() => { setOpen(false); resetForm() }}
+        title={editing ? 'Edit Event' : 'New Event'}
+        description="Event details and content."
+        footer={
+          <>
+            <Button variant="secondary" size="sm" onClick={() => { setOpen(false); resetForm() }}>Cancel</Button>
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : editing ? 'Update Event' : 'Create Event'}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSave} className="space-y-4">
+          <Field label="Title" htmlFor="title">
+            <Input id="title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+          </Field>
+          <Field label="Description" htmlFor="description">
+            <Textarea id="description" rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+          </Field>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Start Date & Time" htmlFor="event_date">
+              <Input id="event_date" type="datetime-local" value={form.event_date} onChange={e => setForm({ ...form, event_date: e.target.value })} required />
+            </Field>
+            <Field label="End Date & Time" htmlFor="event_end_date">
+              <Input id="event_end_date" type="datetime-local" value={form.event_end_date} onChange={e => setForm({ ...form, event_end_date: e.target.value })} />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Status Override" htmlFor="status">
+              <Select id="status" value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+                <option value="">-- Auto-compute --</option>
+                {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+              </Select>
+            </Field>
+            <div className="flex items-end">
+              <label className="flex items-center gap-2 cursor-pointer pb-2.5">
+                <Switch checked={form.is_published} onChange={v => setForm({ ...form, is_published: v })} />
+                <span className="text-sm text-muted-600">{form.is_published ? 'Visible on site' : 'Hidden'}</span>
+              </label>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Location Name" htmlFor="location_name">
+              <Input id="location_name" value={form.location_name} onChange={e => setForm({ ...form, location_name: e.target.value })} />
+            </Field>
+            <Field label="Location Address" htmlFor="location_address">
+              <Input id="location_address" value={form.location_address} onChange={e => setForm({ ...form, location_address: e.target.value })} />
+            </Field>
+          </div>
+          <Field label="Maps Link" htmlFor="maps_link">
+            <Input id="maps_link" value={form.maps_link} onChange={e => setForm({ ...form, maps_link: e.target.value })} placeholder="https://maps.google.com/..." />
+          </Field>
+
+          {!editing && (
+            <Field label="Media (optional)" hint="Add a media URL or use the uploader below when editing.">
+              <div className="flex gap-2">
+                <Select value={mediaType} onChange={e => setMediaType(e.target.value as typeof mediaType)} className="w-32">
+                  <option value="image">Image</option>
+                  <option value="video">Video</option>
+                  <option value="youtube">YouTube</option>
+                </Select>
+                <Input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} placeholder="Media URL" />
+              </div>
+            </Field>
+          )}
+
+          {editing && (
+            <div className="rounded-xl border border-surface-border bg-surface-subtle/50 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-700">Media ({editing.event_media?.length || 0})</p>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,video/*"
+                    onChange={e => handleMediaUpload(e, editing.id)}
+                    className="hidden"
+                    id={`media-upload-${editing.id}`}
+                    disabled={uploading}
+                  />
+                  <label htmlFor={`media-upload-${editing.id}`} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-jade-700 bg-jade-50 hover:bg-jade-100 rounded-lg cursor-pointer transition-colors">
+                    <Upload className="w-3 h-3" /> {uploading ? 'Uploading...' : 'Upload'}
                   </label>
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Location Name</label>
-                  <input value={form.location_name} onChange={e => setForm({...form, location_name: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Location Address</label>
-                  <input value={form.location_address} onChange={e => setForm({...form, location_address: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">Maps Link</label>
-                  <input value={form.maps_link} onChange={e => setForm({...form, maps_link: e.target.value})} className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="https://maps.google.com/..." />
                 </div>
               </div>
 
-              {!editing && (
-                <div>
-                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-2">Media (optional)</label>
-                  <div className="flex gap-2">
-                    <select value={mediaType} onChange={e => setMediaType(e.target.value as any)} className="px-3 py-2 border border-slate-300 rounded-lg text-sm">
-                      <option value="image">Image</option>
-                      <option value="video">Video</option>
-                      <option value="youtube">YouTube</option>
-                    </select>
-                    <input value={mediaUrl} onChange={e => setMediaUrl(e.target.value)} className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none" placeholder="Media URL (or upload below)" />
-                  </div>
+              {uploadError && uploadErrorEventId === editing.id && (
+                <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-danger-50 border border-danger-200 rounded-lg text-[11px] text-danger-700">
+                  <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                  {uploadError}
                 </div>
               )}
 
-              <div className="flex gap-3 pt-2">
-                <button type="submit" disabled={saving} className="bg-jade-600 hover:bg-jade-700 text-white rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors disabled:opacity-50">
-                  {saving ? 'Saving...' : editing ? 'Update Event' : 'Create Event'}
-                </button>
-                <button type="button" onClick={() => setShowForm(false)} className="border border-slate-300 text-slate-600 rounded-lg px-6 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-slate-50 transition-colors">
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {loading ? (
-        <div className="space-y-3">
-          {[1,2,3].map(i => <div key={i} className="bg-white h-16 animate-pulse rounded-xl border border-slate-200" />)}
-        </div>
-      ) : events.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-slate-200">
-          <p className="text-sm text-slate-500">No events yet. Create your first event.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {events.map(event => (
-            <div key={event.id} className="bg-white border border-slate-200 rounded-xl p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`inline-flex items-center px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-full ${
-                      effectiveStatus(event) === 'upcoming' ? 'bg-blue-50 text-blue-700' :
-                      effectiveStatus(event) === 'ongoing' ? 'bg-green-50 text-green-700' : 'bg-slate-100 text-slate-600'
-                    }`}>
-                      {effectiveStatus(event)}
-                    </span>
-                    {!event.is_published && <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Draft</span>}
-                  </div>
-                  <h3 className="text-sm font-semibold text-slate-900">{event.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{formatDate(event.event_date)}{event.location_name && ` · ${event.location_name}`}</p>
-                </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button onClick={() => openEdit(event)} className="p-2 text-slate-400 hover:text-jade-600 hover:bg-jade-50 rounded-lg transition-colors">
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button onClick={() => handleDelete(event.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-slate-100">
-                {uploadError && uploadErrorEventId === event.id && (
-                  <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-50 border border-red-200 rounded text-[11px] text-red-700">
-                    <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                    {uploadError}
-                  </div>
-                )}
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Media ({event.event_media?.length || 0})</p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*,video/*"
-                      onChange={e => handleMediaUpload(e, event.id)}
-                      className="hidden"
-                      id={`media-upload-${event.id}`}
-                      disabled={uploading}
-                    />
-                    <label htmlFor={`media-upload-${event.id}`} className="flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-jade-600 hover:bg-jade-50 rounded-lg cursor-pointer transition-colors">
-                      <Upload className="w-3 h-3" /> {uploading ? 'Uploading...' : 'Upload'}
-                    </label>
-                    <div className="flex gap-1">
-                      <input
-                        value={mediaUrl}
-                        onChange={e => setMediaUrl(e.target.value)}
-                        placeholder="Paste URL..."
-                        className="w-40 px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none focus:border-jade-500"
-                      />
-                      <select value={mediaType} onChange={e => setMediaType(e.target.value as any)} className="px-2 py-1.5 border border-slate-200 rounded text-[11px] outline-none">
-                        <option value="image">Img</option>
-                        <option value="video">Vid</option>
-                        <option value="youtube">YT</option>
-                      </select>
-                      <button onClick={() => handleAddMedia(event.id)} disabled={!mediaUrl || uploading} className="px-2 py-1.5 bg-jade-600 text-white rounded text-[10px] font-semibold disabled:opacity-50">
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                {event.event_media && event.event_media.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {event.event_media.map(m => (
-                      <div key={m.id} className="relative group">
-                        {m.media_type === 'image' ? (
-                          <img src={m.url} alt="" className="h-16 w-16 object-cover rounded border border-slate-200" />
-                        ) : (
-                          <div className="h-16 w-16 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-400">
-                            {m.media_type === 'youtube' ? 'YT' : 'Video'}
-                          </div>
-                        )}
-                        <button onClick={() => handleDeleteMedia(m.id)} className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <X className="w-2.5 h-2.5" />
-                        </button>
+              <div className="flex flex-wrap gap-2">
+                {editing.event_media?.map(m => (
+                  <div key={m.id} className="relative group">
+                    {m.media_type === 'image' ? (
+                      <img src={m.url} alt="" className="h-16 w-16 object-cover rounded-lg border border-surface-border" />
+                    ) : (
+                      <div className="h-16 w-16 bg-surface-subtle rounded-lg border border-surface-border flex items-center justify-center text-[10px] text-muted-500">
+                        {m.media_type === 'youtube' ? 'YT' : 'Video'}
                       </div>
-                    ))}
+                    )}
+                    <button onClick={() => handleDeleteMedia(m.id)} className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-danger-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <X className="w-2.5 h-2.5" />
+                    </button>
                   </div>
+                ))}
+                {(!editing.event_media || editing.event_media.length === 0) && (
+                  <p className="text-[11px] text-muted-400 flex items-center gap-1.5"><ImageIcon className="w-3.5 h-3.5" /> No media yet.</p>
                 )}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          )}
+        </form>
+      </SlideOver>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={o => !o && setDeleteId(null)}
+        title="Delete event?"
+        description="This permanently removes the event and its media. This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={confirmDelete}
+      />
     </div>
   )
 }

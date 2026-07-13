@@ -19,7 +19,7 @@ export default function Layout() {
 
   return (
     <LeadFormProvider>
-      <div className="min-h-screen bg-surface text-slate-900 selection:bg-jade-600/20 selection:text-jade-900">
+      <div className="min-h-screen bg-surface text-ink selection:bg-jade-600/20 selection:text-ink">
         <Navbar />
         <main>
           <Outlet />

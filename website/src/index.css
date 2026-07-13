@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Prata&family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Prata&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    font-family: 'Sora', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1.6;
     font-weight: 400;
     color-scheme: light;
@@ -20,8 +20,17 @@
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background-color: #FAFAFA;
-    color: #0F172A;
+    background-color: #F7FAF8;
+    color: #0C1B14;
+  }
+
+  ::selection {
+    background-color: rgba(5, 150, 105, 0.18);
+    color: #0C1B14;
+  }
+
+  :focus-visible {
+    outline: none;
   }
 
   #root {
@@ -29,19 +38,27 @@
   }
 }
 
+@layer components {
+  .container-page {
+    @apply max-w-7xl mx-auto px-6;
+  }
+
+  .accent-underline {
+    position: relative;
+  }
+  .accent-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.5rem;
+    height: 3px;
+    width: 2.5rem;
+    border-radius: 9999px;
+    background-color: #F97316;
+  }
+}
+
 @layer utilities {
-  .pharma-stripe {
-    height: 3px;
-    width: 4rem;
-    background-color: #059669;
-  }
-
-  .pharma-stripe-blue {
-    height: 3px;
-    width: 4rem;
-    background-color: #2563EB;
-  }
-
   .text-balance {
     text-wrap: balance;
   }
@@ -52,5 +69,12 @@
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@layer utilities {
+  .carousel-fade {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);
   }
 }

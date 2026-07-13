@@ -92,37 +92,37 @@ export default function LeadForm() {
               )}
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Your Name *</label>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-600 mb-1.5">Your Name *</label>
                 <input
                   value={name}
                   onChange={e => setName(e.target.value)}
                   placeholder="e.g. John Doe"
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none transition-colors"
+                  className="w-full px-3 py-2.5 border border-muted-300 rounded-lg text-sm text-ink focus:border-jade-500 outline-none transition-colors"
                   required
                   disabled={submitLead.isPending}
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Phone Number *</label>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-600 mb-1.5">Phone Number *</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                   placeholder="e.g. +254 712 345 678"
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none transition-colors"
+                  className="w-full px-3 py-2.5 border border-muted-300 rounded-lg text-sm text-ink focus:border-jade-500 outline-none transition-colors"
                   required
                   disabled={submitLead.isPending}
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Your Location *</label>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-600 mb-1.5">Your Location *</label>
                 <input
                   value={location}
                   onChange={e => setLocation(e.target.value)}
                   placeholder="e.g. Nairobi, Kenya"
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:border-jade-500 outline-none transition-colors"
+                  className="w-full px-3 py-2.5 border border-muted-300 rounded-lg text-sm text-ink focus:border-jade-500 outline-none transition-colors"
                   required
                   disabled={submitLead.isPending}
                 />
@@ -140,7 +140,7 @@ export default function LeadForm() {
                 )}
               </button>
 
-              <p className="text-[10px] text-slate-400 text-center">
+              <p className="text-[10px] text-muted-400 text-center">
                 We'll open WhatsApp to continue the conversation.
               </p>
             </form>

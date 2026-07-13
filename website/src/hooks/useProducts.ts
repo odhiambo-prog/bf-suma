@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from '@tanstack/react-query'
 import { inventoryService } from '@/services/inventory.service'
 import type { ProductWithStock, StockLevel } from '@/services/inventory.service'
