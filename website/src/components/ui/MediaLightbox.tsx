@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { EventMedia } from '@/types/event.types'
@@ -12,6 +13,7 @@ interface MediaLightboxProps {
 export default function MediaLightbox({ media, initialIndex = 0, onClose }: MediaLightboxProps) {
   const [index, setIndex] = useState(initialIndex)
   const [direction, setDirection] = useState(0)
+  const openedAt = useRef(Date.now())
 
   const goTo = useCallback((i: number) => {
     setDirection(i > index ? 1 : -1)
@@ -38,13 +40,17 @@ export default function MediaLightbox({ media, initialIndex = 0, onClose }: Medi
   const current = media[index]
   if (!current) return null
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center touch-manipulation select-none">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="absolute inset-0 bg-black/90"
-        onClick={onClose}
+        onClick={() => {
+          // Ignore the trailing tap of a double-tap that opened the lightbox
+          if (Date.now() - openedAt.current < 400) return
+          onClose()
+        }}
       />
 
       <button onClick={onClose} className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors">
@@ -83,7 +89,7 @@ export default function MediaLightbox({ media, initialIndex = 0, onClose }: Medi
           onClick={e => e.stopPropagation()}
         >
           {current.media_type === 'image' && (
-            <img src={current.url} alt={current.caption || ''} className="max-w-full max-h-[85vh] object-contain rounded-lg" />
+            <img src={current.url} alt={current.caption || ''} className="max-w-full max-h-[85vh] object-contain rounded-lg touch-manipulation select-none" draggable={false} />
           )}
           {current.media_type === 'video' && (
             <video src={current.url} controls autoPlay className="max-w-full max-h-[85vh] rounded-lg" />
@@ -101,7 +107,7 @@ export default function MediaLightbox({ media, initialIndex = 0, onClose }: Medi
         </motion.div>
       </AnimatePresence>
     </div>
-  )
+  , document.body)
 }
 
 function getYouTubeId(url: string): string | null {

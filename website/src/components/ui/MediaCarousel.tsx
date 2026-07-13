@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, Maximize2 } from 'lucide-react'
 import type { EventMedia } from '@/types/event.types'
 import MediaLightbox from './MediaLightbox'
 
@@ -178,43 +178,58 @@ export default function MediaCarousel({
 function renderThumbnail(item: EventMedia, onClick: () => void) {
   const isVideo = item.media_type === 'video'
   const isYoutube = item.media_type === 'youtube'
+  const isImage = item.media_type === 'image'
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full h-full relative cursor-pointer text-left"
-    >
-      {isYoutube ? (
-        <img
-          src={getYouTubeThumbnail(item.url)}
-          alt="YouTube video thumbnail for event"
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-      ) : isVideo ? (
-        <video
-          src={item.url}
-          className="w-full h-full object-cover"
-          muted
-          preload="metadata"
-        />
-      ) : (
-        <img
-          src={item.url}
-          alt={item.caption || ''}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-      )}
-      {(isVideo || isYoutube) && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
-          <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-md">
-            <Play className="w-5 h-5 text-ink ml-0.5" />
+    <div className="w-full h-full relative">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={isImage ? 'View full image' : 'Play media'}
+        className="w-full h-full relative cursor-pointer text-left touch-manipulation select-none block"
+      >
+        {isYoutube ? (
+          <img
+            src={getYouTubeThumbnail(item.url)}
+            alt="YouTube video thumbnail for event"
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : isVideo ? (
+          <video
+            src={item.url}
+            className="w-full h-full object-cover"
+            muted
+            preload="metadata"
+          />
+        ) : (
+          <img
+            src={item.url}
+            alt={item.caption || ''}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        )}
+        {(isVideo || isYoutube) && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors">
+            <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-md">
+              <Play className="w-5 h-5 text-ink ml-0.5" />
+            </div>
           </div>
-        </div>
+        )}
+      </button>
+
+      {isImage && (
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label="View full image"
+          className="absolute top-2 right-2 z-20 w-9 h-9 rounded-full bg-black/45 hover:bg-black/65 text-white flex items-center justify-center backdrop-blur-sm transition-colors"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </button>
       )}
-    </button>
+    </div>
   )
 }
 
